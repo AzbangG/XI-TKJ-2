@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X TKJ 3</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/app.css">
+</head>
+<body id="body">
+
+    <div class="top-nav">
+        <div class="nav-left">
+            <a href="jadwal.html" class="nav-btn">Jadwal</a>
+            <a href="piket.html" class="nav-btn">Piket</a>
+            <a href="tugas.html" class="nav-btn">Tugas</a>
+            <a href="info.html" class="nav-btn">Info</a>
+            <button id="settingsBtn" class="nav-btn hidden">⚙️ Pengaturan</button>
+        </div>
+        <div id="navUser" class="nav-user"></div>
+    </div>
+
+    <div class="page-wrap">
+        <h1 style="text-align:center;">X TKJ 3</h1>
+        <div id="socialLinks" style="text-align:center; margin-bottom: 10px;"></div>
+        <div id="siswaGrid" class="siswa-grid">
+            <p>Memuat data siswa...</p>
+        </div>
+    </div>
+
+    <!-- Modal pengaturan tampilan halaman siswa (admin) -->
+    <div id="settingsModal" class="modal-overlay">
+        <div class="modal-box">
+            <h3>Pengaturan Halaman</h3>
+            <div class="field">
+                <label for="cfgBackground">URL Background Halaman</label>
+                <input type="text" id="cfgBackground" placeholder="https://...">
+            </div>
+            <div class="field">
+                <label for="cfgInstagram">Link Instagram Kelas</label>
+                <input type="text" id="cfgInstagram" placeholder="https://instagram.com/...">
+            </div>
+            <div class="field">
+                <label for="cfgTiktok">Link TikTok Kelas</label>
+                <input type="text" id="cfgTiktok" placeholder="https://tiktok.com/@...">
+            </div>
+            <div class="edit-actions">
+                <button id="cfgSave" class="btn btn-save">Simpan</button>
+                <button id="cfgCancel" class="btn btn-cancel">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/index.js"></script>
+</body>
+</html>

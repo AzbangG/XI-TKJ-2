@@ -1,0 +1,201 @@
+/* ===== Layout umum halaman baru ===== */
+.page-wrap {
+    max-width: 900px;
+    margin: 90px auto 40px;
+    padding: 0 16px;
+}
+
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85em;
+}
+
+.nav-btn {
+    background: var(--btn-bg);
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 0.9em;
+}
+
+.nav-btn:hover { background: var(--btn-hover); }
+
+/* ===== Form (login, edit) ===== */
+.form-card {
+    background: var(--card-bg);
+    border-radius: 14px;
+    padding: 28px;
+    max-width: 420px;
+    margin: 0 auto;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.form-card h2 { text-align: center; margin-top: 0; }
+
+.field { margin-bottom: 16px; }
+
+.field label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+.field input,
+.field textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--nav-border);
+    background: var(--bg-color);
+    color: var(--text-color);
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.form-submit {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: var(--btn-bg);
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.form-submit:hover { background: var(--btn-hover); }
+
+.form-error {
+    display: none;
+    background: #fdecea;
+    color: #c0392b;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 14px;
+    font-size: 0.9em;
+}
+
+/* ===== Grid siswa ===== */
+.siswa-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 18px;
+    margin-top: 20px;
+}
+
+/* ===== Kartu detail siswa ===== */
+.detail-card {
+    background: var(--card-bg);
+    padding: 24px;
+    border-radius: 14px;
+    max-width: 480px;
+    margin: 0 auto;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.detail-photo {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto 16px;
+    border: 3px solid var(--nav-border);
+}
+
+.detail-card h2 { text-align: center; margin-top: 0; }
+
+.detail-row { margin: 10px 0; }
+.detail-row b { margin-right: 6px; }
+
+.edit-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #fff;
+}
+
+.btn-edit { background: #28a745; }
+.btn-edit:hover { background: #218838; }
+.btn-save { background: #007bff; }
+.btn-save:hover { background: #0056b3; }
+.btn-cancel { background: #6c757d; }
+.btn-cancel:hover { background: #565e64; }
+
+.back-link {
+    display: inline-block;
+    margin-top: 18px;
+    color: var(--btn-bg);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* ===== Tugas ===== */
+.tugas-list { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+
+.tugas-item {
+    background: var(--card-bg);
+    padding: 16px 18px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.tugas-item h3 { margin: 0 0 4px; }
+.tugas-item .mapel { font-size: 0.8em; opacity: 0.7; }
+.tugas-item .deadline { font-size: 0.85em; color: #e67e22; font-weight: bold; }
+
+.btn-danger {
+    background: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+.btn-danger:hover { background: #b02a37; }
+
+/* ===== Modal pengaturan admin ===== */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal-box {
+    background: var(--card-bg);
+    border-radius: 14px;
+    padding: 24px;
+    max-width: 420px;
+    width: 90%;
+}
+
+.modal-box h3 { margin-top: 0; }
+
+.hidden { display: none !important; }

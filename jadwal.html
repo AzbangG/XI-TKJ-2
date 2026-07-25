@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jadwal Kelas - X TKJ 3</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Jadwal Specific Styles */
+        .schedule-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        .schedule-header {
+            text-align: center;
+            padding: 40px 20px 20px;
+        }
+
+        .schedule-title {
+            font-size: 2.5em;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.4));
+        }
+
+        .dark-mode .schedule-title {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .schedule-subtitle {
+            color: var(--text-color);
+            font-size: 1.1em;
+            opacity: 0.8;
+        }
+
+        /* Day Selector */
+        .day-selector {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 30px 0;
+            padding: 0 20px;
+        }
+
+        .day-btn {
+            padding: 12px 24px;
+            background: var(--card-bg);
+            border: 2px solid var(--nav-border);
+            border-radius: 50px;
+            color: var(--text-color);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            font-size: 14px;
+        }
+
+        .day-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .day-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .dark-mode .day-btn.active {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+
+        /* Today Badge for Day Button */
+        .day-btn.today {
+            position: relative;
+        }
+
+        .day-btn.today::after {
+            content: '● Hari Ini';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7em;
+            font-weight: 600;
+            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.4);
+            animation: pulse 2s ease-in-out infinite;
+            white-space: nowrap;
+            z-index: 10;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.85; transform: scale(0.98); }
+        }
+
+        /* Schedule Cards */
+        .schedule-content {
+            display: none;
+            animation: fadeInScale 0.5s ease-out;
+        }
+
+        .schedule-content.active {
+            display: block;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .schedule-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .schedule-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .schedule-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .schedule-card:hover::before {
+            opacity: 1;
+        }
+
+        .dark-mode .schedule-card {
+            border-left-color: #3b82f6;
+        }
+
+        .schedule-time {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .dark-mode .schedule-time {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+
+        .schedule-subject {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .schedule-teacher {
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.95em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .schedule-room {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            padding: 4px 12px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 12px;
+            font-size: 0.9em;
+            color: #667eea;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+
+        .dark-mode .schedule-room {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-color);
+            opacity: 0.6;
+        }
+
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .schedule-title {
+                font-size: 2em;
+            }
+
+            .day-selector {
+                gap: 8px;
+            }
+
+            .day-btn {
+                padding: 10px 18px;
+                font-size: 13px;
+            }
+
+            .day-btn.today::after {
+                font-size: 0.65em;
+                padding: 3px 6px;
+                top: -8px;
+                right: -8px;
+            }
+
+            .schedule-card {
+                padding: 16px;
+            }
+
+            .schedule-subject {
+                font-size: 1.15em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .schedule-title {
+                font-size: 1.8em;
+            }
+
+            .day-btn {
+                padding: 8px 14px;
+                font-size: 12px;
+            }
+
+            .day-btn.today::after {
+                font-size: 0.6em;
+                padding: 2px 5px;
+                top: -7px;
+                right: -7px;
+            }
+
+            .schedule-time {
+                font-size: 12px;
+                padding: 5px 12px;
+            }
+
+            .schedule-subject {
+                font-size: 1.1em;
+            }
+
+            .schedule-teacher {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Slideshow -->
+    <div class="bg-slideshow" id="bgSlideshow"></div>
+
+    <!-- Top Navigation Bar -->
+    <!-- Top Navigation Bar -->
+    <nav class="top-nav">
+        <div class="nav-left">
+            <div class="date-time-display" id="dateTimeDisplay">
+                <div class="current-date" id="currentDate">Loading...</div>
+                <div class="current-time" id="currentTime">Loading...</div>
+            </div>
+        </div>
+        <div class="nav-right">
+            <button id="theme-toggle" class="theme-toggle">
+                <div class="toggle-track">
+                    <div class="toggle-thumb">
+                        <span class="icon sun">☀️</span>
+                        <span class="icon moon">🌙</span>
+                    </div>
+                </div>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <div class="schedule-header">
+        <h1 class="schedule-title">Jadwal Pelajaran</h1>
+        <p class="schedule-subtitle">Kelas X TKJ 3</p>
+    </div>
+
+    <!-- Day Selector -->
+    <div class="day-selector">
+        <button class="day-btn active" data-day="senin">Senin</button>
+        <button class="day-btn" data-day="selasa">Selasa</button>
+        <button class="day-btn" data-day="rabu">Rabu</button>
+        <button class="day-btn" data-day="kamis">Kamis</button>
+        <button class="day-btn" data-day="jumat">Jumat</button>
+        <button class="day-btn" data-day="sabtu">Sabtu</button>
+    </div>
+
+    <!-- Schedule Container -->
+    <div class="schedule-container">
+        
+        <!-- Senin -->
+        <div class="schedule-content active" data-day="senin">
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 07:00 - 07:40</div>
+                <div class="schedule-subject">Upacara Bendera</div>
+                <div class="schedule-teacher">👨‍🏫 Seluruh Guru</div>
+                <div class="schedule-room">📍 Lapangan Upacara</div>
+            </div>
+
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 07:40 - 08:20</div>
+                <div class="schedule-subject">Bahasa Inggris</div>
+                <div class="schedule-teacher">👨‍🏫 Pa Misbah</div>
+                <div class="schedule-room">📍 Kelas</div>
+            </div>
+            
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 08:20 - 09:00</div>
+                <div class="schedule-subject">Bahasa Inggris</div>
+                <div class="schedule-teacher">👨‍🏫 Pa Misbah</div>
+                <div class="schedule-room">📍 Kelas</div>
+            </div>
+            
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 09:00 - 09:40</div>
+                <div class="schedule-subject">Bahasa Inggris</div>
+                <div class="schedule-teacher">👨‍🏫 Pa Misbah</div>
+                <div class="schedule-room">📍 Kelas</div>
+            </div>
+
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 09:40 - 10:20</div>
+                <div class="schedule-subject">Bahasa Inggris</div>
+                <div class="schedule-teacher">👨‍🏫 Pa Misbah</div>
+                <div class="schedule-room">📍 Kelas</div>
+            </div>
+
+            <div class="schedule-card" style="background: rgba(255, 193, 7, 0.1); border-left-color: #ffc107;">
+                <div class="schedule-time">⏰ 10:20 - 10:40</div>
+                <div class="schedule-subject">☕ ISTIRAHAT</div>
+                <div class="schedule-teacher">⏸️ Break Time (20 menit)</div>
+                <div class="schedule-room">📍 Area Sekolah</div>
+            </div>
+            
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 10:40 - 11:20</div>
+                <div class="schedule-subject">Projek IPAS</div>
+                <div class="schedule-teacher">👩‍🏫 Bu Elida</div>
+                <div class="schedule-room">📍 Kelas</div>
+            </div>
+            
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 11:20 - 12:00</div>
+                <div class="schedule-subject">Projek IPAS</div>
+                <div class="schedule-teacher">👩‍🏫 Bu Elida</div>
+                <div class="schedule-room">📍 Kelas</div>
+            </div>
+
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 12:00 - 12:15</div>
+                <div class="schedule-subject">Dasar Program Keahlian TKJ</div>
+                <div class="schedule-teacher">👨‍🏫 Pa Herman</div>
+                <div class="schedule-room">📍 Lab Komputer/Kelas</div>
+            </div>
+        </div>
+
+        <!-- Selasa -->
+        <div class="schedule-content" data-day="selasa">
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 07:00 - 07:40</div>
+                <div class="schedule-subject">Informatika</div>
+                <div class="schedule-teacher">👩‍🏫 Bu Musanah</div>
+                <div class="schedule-room">📍 Lab Komputer/Kelas</div>
+            </div>
+            
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 07:40 - 08:20</div>
+                <div class="schedule-subject">Informatika</div>
+                <div class="schedule-teacher">👩‍🏫 Bu Musanah</div>
+                <div class="schedule-room">📍 Lab Komputer/Kelas</div>
+            </div>
+            
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 08:20 - 09:00</div>
+                <div class="schedule-subject">Dasar Program Keahlian TKJ</div>
+                <div class="schedule-teacher">👨‍🏫 Pa Herman</div>
+                <div class="schedule-room">📍 Lab Komputer/Praktek</div>
+            </div>
+
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 09:00 - 09:40</div>
+                <div class="schedule-subject">Dasar Program Keahlian TKJ</div>
+                <div class="schedule-teacher">👨‍🏫 Pa Herman</div>
+                <div class="schedule-room">📍 Lab Komputer/Praktek</div>
+            </div>
+
+            <div class="schedule-card" style="background: rgba(255, 193, 7, 0.1); border-left-color: #ffc107;">
+                <div class="schedule-time">⏰ 09:40 - 10:10</div>
+                <div class="schedule-subject">☕ ISTIRAHAT</div>
+                <div class="schedule-teacher">⏸️ Break Time (30 menit)</div>
+                <div class="schedule-room">📍 Area Sekolah</div>
+            </div>
+            
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 10:10 - 10:50</div>
+                <div class="schedule-subject">Matematika (MTK)</div>
+                <div class="schedule-teacher">👨‍🏫 Pak Lala</div>
+                <div class="schedule-room">📍 Kelas</div>
+            </div>
+            
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 10:50 - 11:30</div>
+                <div class="schedule-subject">Matematika (MTK)</div>
+                <div class="schedule-teacher">👨‍🏫 Pak Lala</div>
+                <div class="schedule-room">📍 Kelas</div>
+            </div>
+
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 11:30 - 12:15</div>
+                <div class="schedule-subject">PAIBP (Pend. Agama Islam)</div>
+                <div class="schedule-teacher">👩‍🏫 Bu Maisaroh</div>
+                <div class="schedule-room">📍 Kelas</div>
+            </div>
+        </div>
+
+        <!-- Rabu -->
+        <div class="schedule-content" data-day="rabu">
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 07:00 - 07:40</div>
+                <div class="schedule-subject">Dasar Program Keahlian TKJ</div>
+                <div class="schedule-teacher">👨‍🏫 Pa Herman</div>
+                <div class="schedule-room">📍 Lab Komputer/Praktek</div>
+            </div>
+            
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 07:40 - 08:20</div>
+                <div class="schedule-subject">Dasar Program Keahlian TKJ</div>
+                <div class="schedule-teacher">👨‍🏫 Pa Herman</div>
+                <div class="schedule-room">📍 Lab Komputer/Praktek</div>
+            </div>
+            
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 08:20 - 09:00</div>
+                <div class="schedule-subject">Bahasa Indonesia</div>
+                <div class="schedule-teacher">👩‍🏫 Bu Afria</div>
+                <div class="schedule-room">📍 Kelas</div>
+            </div>
+
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 09:00 - 09:40</div>
+                <div class="schedule-subject">Bahasa Indonesia</div>
+                <div class="schedule-teacher">👩‍🏫 Bu Afria</div>
+                <div class="schedule-room">📍 Kelas</div>
+            </div>
+
+            <div class="schedule-card" style="background: rgba(255, 193, 7, 0.1); border-left-color: #ffc107;">
+                <div class="schedule-time">⏰ 09:40 - 10:10</div>
+                <div class="schedule-subject">☕ ISTIRAHAT</div>
+                <div class="schedule-teacher">⏸️ Break Time (30 menit)</div>
+                <div class="schedule-room">📍 Area Sekolah</div>
+            </div>
+            
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 10:10 - 10:50</div>
+                <div class="schedule-subject">Mulok Tek Info AI (TIK)</div>
+                <div class="schedule-teacher">👨‍🏫 Pak Mahfudz</div>
+                <div class="schedule-room">📍 Lab Komputer/Kelas</div>
+            </div>
+            
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 10:50 - 11:30</div>
+                <div class="schedule-subject">Mulok Tek Info AI (TIK)</div>
+                <div class="schedule-teacher">👨‍🏫 Pak Mahfudz</div>
+                <div class="schedule-room">📍 Lab Komputer/Kelas</div>
+            </div>
+
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 11:30 - 12:15</div>
+                <div class="schedule-subject">Dasar Program Keahlian TKJ</div>
+                <div class="schedule-teacher">👨‍🏫 Pa Herman</div>
+                <div class="schedule-room">📍 Lab Komputer/Praktek</div>
+            </div>
+        </div>
+
+        <!-- Kamis -->
+        <div class="schedule-content" data-day="kamis">
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 07:00 - 07:40</div>
+                <div class="schedule-subject">Seni Budaya (Seni Rupa)</div>
+                <div class="schedule-teacher">👩‍🏫 Bu Sari</div>
+                <div class="schedule-room">📍 Kelas</div>
+            </div>
+            
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 07:40 - 08:20</div>
+                <div class="schedule-subject">Seni Budaya (Seni Rupa)</div>
+                <div class="schedule-teacher">👩‍🏫 Bu Sari</div>
+                <div class="schedule-room">📍 Kelas</div>
+            </div>
+            
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 08:20 - 09:00</div>
+                <div class="schedule-subject">PJOK (Pend. Jasmani)</div>
+                <div class="schedule-teacher">👨‍🏫 Pak Sahrul</div>
+                <div class="schedule-room">📍 Lapangan Sekolah</div>
+            </div>
+
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 09:00 - 09:40</div>
+                <div class="schedule-subject">PJOK (Pend. Jasmani)</div>
+                <div class="schedule-teacher">👨‍🏫 Pak Sahrul</div>
+                <div class="schedule-room">📍 Lapangan Sekolah</div>
+            </div>
+
+            <div class="schedule-card" style="background: rgba(255, 193, 7, 0.1); border-left-color: #ffc107;">
+                <div class="schedule-time">⏰ 09:40 - 10:10</div>
+                <div class="schedule-subject">☕ ISTIRAHAT</div>
+                <div class="schedule-teacher">⏸️ Break Time (30 menit)</div>
+                <div class="schedule-room">📍 Area Sekolah</div>
+            </div>
+            
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 10:10 - 10:50</div>
+                <div class="schedule-subject">Bahasa Indonesia</div>
+                <div class="schedule-teacher">👩‍🏫 Bu Afria</div>
+                <div class="schedule-room">📍 Kelas</div>
+            </div>
+            
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 10:50 - 11:30</div>
+                <div class="schedule-subject">Bahasa Indonesia</div>
+                <div class="schedule-teacher">👩‍🏫 Bu Afria</div>
+                <div class="schedule-room">📍 Kelas</div>
+            </div>
+
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 11:30 - 12:15</div>
+                <div class="schedule-subject">Dasar Program Keahlian TKJ</div>
+                <div class="schedule-teacher">👨‍🏫 Pa Herman</div>
+                <div class="schedule-room">📍 Lab Komputer/Praktek</div>
+            </div>
+        </div>
+
+        <!-- Jumat -->
+        <div class="schedule-content" data-day="jumat">
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 07:00 - 07:40</div>
+                <div class="schedule-subject">Sejarah</div>
+                <div class="schedule-teacher">👨‍🏫 Pak Roy</div>
+                <div class="schedule-room">📍 Kelas</div>
+            </div>
+            
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 07:40 - 08:20</div>
+                <div class="schedule-subject">Sejarah</div>
+                <div class="schedule-teacher">👨‍🏫 Pak Roy</div>
+                <div class="schedule-room">📍 Kelas</div>
+            </div>
+            
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 08:20 - 09:00</div>
+                <div class="schedule-subject">Dasar Program Keahlian TKJ</div>
+                <div class="schedule-teacher">👨‍🏫 Pa Herman</div>
+                <div class="schedule-room">📍 Lab Komputer/Praktek</div>
+            </div>
+
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 09:00 - 09:40</div>
+                <div class="schedule-subject">Dasar Program Keahlian TKJ</div>
+                <div class="schedule-teacher">👨‍🏫 Pa Herman</div>
+                <div class="schedule-room">📍 Lab Komputer/Praktek</div>
+            </div>
+
+            <div class="schedule-card" style="background: rgba(255, 193, 7, 0.1); border-left-color: #ffc107;">
+                <div class="schedule-time">⏰ 09:40 - 10:10</div>
+                <div class="schedule-subject">☕ ISTIRAHAT</div>
+                <div class="schedule-teacher">⏸️ Break Time (30 menit)</div>
+                <div class="schedule-room">📍 Area Sekolah</div>
+            </div>
+            
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 10:10 - 10:50</div>
+                <div class="schedule-subject">Pendidikan Pancasila</div>
+                <div class="schedule-teacher">👩‍🏫 Bu Evi</div>
+                <div class="schedule-room">📍 Kelas</div>
+            </div>
+
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 10:50 - 11:00</div>
+                <div class="schedule-subject">Pendidikan Pancasila</div>
+                <div class="schedule-teacher">👩‍🏫 Bu Evi</div>
+                <div class="schedule-room">📍 Kelas</div>
+            </div>
+
+            <div class="schedule-card" style="background: rgba(16, 185, 129, 0.1); border-left-color: #10b981;">
+                <div class="schedule-time">🏠 11:00</div>
+                <div class="schedule-subject">✅ PULANG</div>
+                <div class="schedule-teacher">🎉 Selamat Akhir Pekan!</div>
+                <div class="schedule-room">📍 Jumat Pulang Lebih Cepat</div>
+            </div>
+        </div>
+
+        <!-- Sabtu -->
+        <div class="schedule-content" data-day="sabtu">
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 07:00 - 07:40</div>
+                <div class="schedule-subject">Informatika</div>
+                <div class="schedule-teacher">👩‍🏫 Bu Musanah</div>
+                <div class="schedule-room">📍 Lab Komputer/Kelas</div>
+            </div>
+            
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 07:40 - 08:20</div>
+                <div class="schedule-subject">Informatika</div>
+                <div class="schedule-teacher">👩‍🏫 Bu Musanah</div>
+                <div class="schedule-room">📍 Lab Komputer/Kelas</div>
+            </div>
+            
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 08:20 - 09:00</div>
+                <div class="schedule-subject">Matematika (MTK)</div>
+                <div class="schedule-teacher">👨‍🏫 Pak Lala</div>
+                <div class="schedule-room">📍 Kelas</div>
+            </div>
+
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 09:00 - 09:40</div>
+                <div class="schedule-subject">Matematika (MTK)</div>
+                <div class="schedule-teacher">👨‍🏫 Pak Lala</div>
+                <div class="schedule-room">📍 Kelas</div>
+            </div>
+
+            <div class="schedule-card" style="background: rgba(255, 193, 7, 0.1); border-left-color: #ffc107;">
+                <div class="schedule-time">⏰ 09:40 - 10:10</div>
+                <div class="schedule-subject">☕ ISTIRAHAT</div>
+                <div class="schedule-teacher">⏸️ Break Time (30 menit)</div>
+                <div class="schedule-room">📍 Area Sekolah</div>
+            </div>
+            
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 10:10 - 10:50</div>
+                <div class="schedule-subject">Projek IPAS</div>
+                <div class="schedule-teacher">👩‍🏫 Bu Elida</div>
+                <div class="schedule-room">📍 Kelas</div>
+            </div>
+            
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 10:50 - 11:30</div>
+                <div class="schedule-subject">Projek IPAS</div>
+                <div class="schedule-teacher">👩‍🏫 Bu Elida</div>
+                <div class="schedule-room">📍 Kelas</div>
+            </div>
+
+            <div class="schedule-card">
+                <div class="schedule-time">⏰ 11:30 - 12:15</div>
+                <div class="schedule-subject">Projek IPAS</div>
+                <div class="schedule-teacher">👩‍🏫 Bu Elida</div>
+                <div class="schedule-room">📍 Kelas</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <span class="nav-icon"><img src="Images/Icon/Siswa.png" alt="Siswa"></span>
+            <span class="nav-label">Siswa</span>
+        </a>
+        <a href="jadwal.html" class="nav-item active">
+            <span class="nav-icon"><img src="Images/Icon/Jadwal.png" alt="Jadwal"></span>
+            <span class="nav-label">Jadwal</span>
+        </a>
+        <a href="piket.html" class="nav-item">
+            <span class="nav-icon"><img src="Images/Icon/Piket.png" alt="Piket"></span>
+            <span class="nav-label">Piket</span>
+        </a>
+        <a href="tugas.html" class="nav-item">
+            <span class="nav-icon"><img src="Images/Icon/Tugas.png" alt="Tugas"></span>
+            <span class="nav-label">Tugas</span>
+        </a>
+        <a href="info.html" class="nav-item">
+            <span class="nav-icon"><img src="Images/Icon/Info.png" alt="Info"></span>
+            <span class="nav-label">Info</span>
+        </a>
+    </nav>
+
+    <script>
+        // Background Slideshow
+        document.addEventListener('DOMContentLoaded', function() {
+            const bgSlideshow = document.getElementById('bgSlideshow');
+            
+            const images = [
+                'Images/Background/1.jpg',
+                'Images/Background/2.jpg',
+                'Images/Background/3.jpg',
+                'Images/Background/4.jpg',
+                'Images/Background/5.jpg',
+                'Images/Background/6.jpg'
+            ];
+            
+            images.forEach((img, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'bg-slide';
+                slide.style.backgroundImage = `url('${img}')`;
+                slide.style.animationDelay = `${index * 6}s`;
+                if (index === 0) slide.classList.add('active');
+                bgSlideshow.appendChild(slide);
+            });
+
+            // ===== DATE TIME UPDATE =====
+            function updateDateTime() {
+                const now = new Date();
+                const options = { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                };
+                const dateString = now.toLocaleDateString('id-ID', options);
+                const timeString = now.toLocaleTimeString('id-ID', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                
+                document.getElementById('currentDate').textContent = dateString;
+                document.getElementById('currentTime').textContent = timeString;
+            }
+            
+            // Update immediately and then every second
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            
+            let currentSlide = 0;
+            setInterval(() => {
+                const slides = document.querySelectorAll('.bg-slide');
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            }, 6000);
+
+            // Dark mode toggle
+            const themeToggle = document.getElementById('theme-toggle');
+            const savedTheme = localStorage.getItem('theme');
+            
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+            
+            themeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+                
+                if (document.body.classList.contains('dark-mode')) {
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+
+            // ===== DATE TIME UPDATE =====
+            function updateDateTime() {
+                const now = new Date();
+                const options = { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                };
+                const dateString = now.toLocaleDateString('id-ID', options);
+                const timeString = now.toLocaleTimeString('id-ID', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                
+                document.getElementById('currentDate').textContent = dateString;
+                document.getElementById('currentTime').textContent = timeString;
+            }
+            
+            // Update immediately and then every second
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+
+            // Day Selector
+            const dayButtons = document.querySelectorAll('.day-btn');
+            const scheduleContents = document.querySelectorAll('.schedule-content');
+
+            dayButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const selectedDay = button.getAttribute('data-day');
+                    
+                    // Remove active class from all buttons
+                    dayButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    // Hide all schedule contents
+                    scheduleContents.forEach(content => content.classList.remove('active'));
+                    
+                    // Show selected day schedule
+                    const selectedContent = document.querySelector(`.schedule-content[data-day="${selectedDay}"]`);
+                    if (selectedContent) {
+                        selectedContent.classList.add('active');
+                    }
+                });
+
+            // ===== DATE TIME UPDATE =====
+            function updateDateTime() {
+                const now = new Date();
+                const options = { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                };
+                const dateString = now.toLocaleDateString('id-ID', options);
+                const timeString = now.toLocaleTimeString('id-ID', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                
+                document.getElementById('currentDate').textContent = dateString;
+                document.getElementById('currentTime').textContent = timeString;
+            }
+            
+            // Update immediately and then every second
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            });
+
+            // ===== DATE TIME UPDATE =====
+            function updateDateTime() {
+                const now = new Date();
+                const options = { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                };
+                const dateString = now.toLocaleDateString('id-ID', options);
+                const timeString = now.toLocaleTimeString('id-ID', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                
+                document.getElementById('currentDate').textContent = dateString;
+                document.getElementById('currentTime').textContent = timeString;
+            }
+            
+            // Update immediately and then every second
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+
+            // Auto select current day
+            const days = ['minggu', 'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'];
+            const today = new Date().getDay();
+            const currentDay = days[today];
+            
+            // Tambahkan badge "Hari Ini" ke tombol hari saat ini
+            if (currentDay !== 'minggu') {
+                const todayButton = document.querySelector(`.day-btn[data-day="${currentDay}"]`);
+                if (todayButton) {
+                    todayButton.classList.add('today');
+                }
+            }
+            
+            // Jika hari Minggu, default ke Senin
+            if (currentDay === 'minggu') {
+                const mondayButton = document.querySelector('.day-btn[data-day="senin"]');
+                if (mondayButton) {
+                    mondayButton.click();
+                }
+            } else {
+                // Pilih hari saat ini (termasuk Sabtu)
+                const todayButton = document.querySelector(`.day-btn[data-day="${currentDay}"]`);
+                if (todayButton) {
+                    todayButton.click();
+                }
+            }
+        });
+
+            // ===== DATE TIME UPDATE =====
+            function updateDateTime() {
+                const now = new Date();
+                const options = { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                };
+                const dateString = now.toLocaleDateString('id-ID', options);
+                const timeString = now.toLocaleTimeString('id-ID', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                
+                document.getElementById('currentDate').textContent = dateString;
+                document.getElementById('currentTime').textContent = timeString;
+            }
+            
+            // Update immediately and then every second
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Card Game - Tes Ingatan</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        /* Difficulty Selection Screen */
+        .difficulty-screen {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 50px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .game-title {
+            font-size: 3em;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+        }
+
+        .game-subtitle {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+        .difficulty-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .difficulty-options {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .difficulty-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 250px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border: 3px solid transparent;
+        }
+
+        .difficulty-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .difficulty-card.easy {
+            border-color: #10b981;
+        }
+
+        .difficulty-card.easy:hover {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+        }
+
+        .difficulty-card.normal {
+            border-color: #f59e0b;
+        }
+
+        .difficulty-card.normal:hover {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.1) 100%);
+        }
+
+        .difficulty-card.hard {
+            border-color: #ef4444;
+        }
+
+        .difficulty-card.hard:hover {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+        }
+
+        .difficulty-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .difficulty-name {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .difficulty-card.easy .difficulty-name {
+            color: #10b981;
+        }
+
+        .difficulty-card.normal .difficulty-name {
+            color: #f59e0b;
+        }
+
+        .difficulty-card.hard .difficulty-name {
+            color: #ef4444;
+        }
+
+        .difficulty-info {
+            color: #666;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .difficulty-info p {
+            margin: 5px 0;
+        }
+
+        /* Back to Home Button */
+        .back-to-home {
+            margin-top: 30px;
+            padding: 14px 35px;
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 1em;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+        }
+
+        .back-to-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(107, 114, 128, 0.5);
+            background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+        }
+
+        .back-to-home:active {
+            transform: translateY(0);
+        }
+
+        /* Game Screen */
+        .game-screen {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .game-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px 30px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .game-info {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .info-icon {
+            font-size: 1.5em;
+        }
+
+        .health-container {
+            display: flex;
+            gap: 5px;
+        }
+
+        .heart {
+            font-size: 1.8em;
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        .heart.lost {
+            opacity: 0.3;
+            filter: grayscale(100%);
+            animation: heartBreak 0.5s ease;
+        }
+
+        @keyframes heartBreak {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.3) rotate(10deg);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0.3;
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .score {
+            font-size: 1.3em;
+            color: #667eea;
+        }
+
+        .back-btn {
+            padding: 10px 25px;
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(107, 114, 128, 0.4);
+        }
+
+        /* Game Board */
+        .game-board {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        /* Preview Overlay */
+        .preview-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .preview-overlay.hide {
+            animation: fadeOut 0.5s ease forwards;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+
+        .preview-text {
+            color: white;
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        .countdown {
+            font-size: 8em;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 0 40px rgba(0, 0, 0, 0.8),
+                         0 4px 20px rgba(0, 0, 0, 1);
+            animation: countdownPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes countdownPulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.8;
+            }
+        }
+
+        .preview-message {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2em;
+            margin-top: 20px;
+            text-align: center;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        .cards-container {
+            display: grid;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .cards-container.easy {
+            grid-template-columns: repeat(5, 1fr);
+        }
+
+        .cards-container.normal {
+            grid-template-columns: repeat(6, 1fr);
+        }
+
+        .cards-container.hard {
+            grid-template-columns: repeat(8, 1fr);
+        }
+
+        .card {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            cursor: pointer;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card.matched {
+            opacity: 0.6;
+            cursor: default;
+            animation: matchAnimation 0.5s ease;
+        }
+
+        @keyframes matchAnimation {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        .card.wrong {
+            animation: shakeAnimation 0.5s ease;
+        }
+
+        @keyframes shakeAnimation {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-10px);
+            }
+            75% {
+                transform: translateX(10px);
+            }
+        }
+
+        .card-front,
+        .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 15px;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-size: 2em;
+            color: white;
+        }
+
+        .card-back {
+            background: white;
+            font-size: 3em;
+            transform: rotateY(180deg);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 30px;
+            padding: 50px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-icon {
+            font-size: 6em;
+            margin-bottom: 20px;
+            animation: bounce 0.8s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .modal-title {
+            font-size: 2.5em;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+
+        .modal-title.win {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-title.lose {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-message {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .modal-stats {
+            background: #f9fafb;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .modal-stats p {
+            font-size: 1.1em;
+            color: #333;
+            margin: 10px 0;
+        }
+
+        .modal-stats strong {
+            color: #667eea;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            padding: 15px 35px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .play-again-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .play-again-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .menu-btn {
+            background: #e5e7eb;
+            color: #333;
+        }
+
+        .menu-btn:hover {
+            background: #d1d5db;
+            transform: translateY(-2px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .difficulty-screen {
+                padding: 30px 20px;
+            }
+
+            .game-title {
+                font-size: 2em;
+            }
+
+            .difficulty-options {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .difficulty-card {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .back-to-home {
+                padding: 12px 28px;
+                font-size: 0.95em;
+            }
+
+            .game-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .game-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .cards-container.easy {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 10px;
+            }
+
+            .cards-container.normal {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 10px;
+            }
+
+            .cards-container.hard {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 8px;
+            }
+
+            .card-back {
+                font-size: 2em;
+            }
+
+            .modal-content {
+                padding: 30px 20px;
+            }
+
+            .modal-buttons {
+                flex-direction: column;
+            }
+
+            .modal-btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .game-board {
+                padding: 15px;
+            }
+
+            .cards-container {
+                gap: 8px;
+            }
+
+            .card-back {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Difficulty Selection Screen -->
+        <div class="difficulty-screen" id="difficultyScreen">
+            <h1 class="game-title">🧠 Memory Game</h1>
+            <p class="game-subtitle">Uji kemampuan ingatanmu!</p>
+            <h2 class="difficulty-title">Pilih Tingkat Kesulitan</h2>
+            
+            <div class="difficulty-options">
+                <div class="difficulty-card easy" onclick="startGame('easy')">
+                    <div class="difficulty-icon">😊</div>
+                    <h3 class="difficulty-name">EASY</h3>
+                    <div class="difficulty-info">
+                        <p><strong>10 kartu</strong> (5 pasang)</p>
+                        <p>Cocokkan <strong>2 gambar</strong></p>
+                        <p><strong>3 kesempatan</strong> salah</p>
+                    </div>
+                </div>
+
+                <div class="difficulty-card normal" onclick="startGame('normal')">
+                    <div class="difficulty-icon">🤔</div>
+                    <h3 class="difficulty-name">NORMAL</h3>
+                    <div class="difficulty-info">
+                        <p><strong>18 kartu</strong> (6 set)</p>
+                        <p>Cocokkan <strong>3 gambar</strong></p>
+                        <p><strong>4 kesempatan</strong> salah</p>
+                    </div>
+                </div>
+
+                <div class="difficulty-card hard" onclick="startGame('hard')">
+                    <div class="difficulty-icon">😰</div>
+                    <h3 class="difficulty-name">HARD</h3>
+                    <div class="difficulty-info">
+                        <p><strong>32 kartu</strong> (8 set)</p>
+                        <p>Cocokkan <strong>4 gambar</strong></p>
+                        <p><strong>5 kesempatan</strong> salah</p>
+                    </div>
+                </div>
+            </div>
+
+            <a href="../index.html" class="back-to-home">
+                🏠 Kembali ke Halaman Utama
+            </a>
+        </div>
+
+        <!-- Game Screen -->
+        <div class="game-screen" id="gameScreen">
+            <div class="game-header">
+                <div class="game-info">
+                    <div class="info-item">
+                        <span class="info-icon">❤️</span>
+                        <div class="health-container" id="healthContainer"></div>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">🎯</span>
+                        <span>Score: <span class="score" id="score">0</span></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">⏱️</span>
+                        <span>Waktu: <span class="score" id="timer">0:00</span></span>
+                    </div>
+                </div>
+                <button class="back-btn" onclick="backToMenu()">⬅️ Menu</button>
+            </div>
+
+            <div class="game-board">
+                <div class="preview-overlay" id="previewOverlay">
+                    <div class="preview-text">Hafalkan posisi kartu!</div>
+                    <div class="countdown" id="countdown">3</div>
+                    <div class="preview-message">Permainan akan dimulai...</div>
+                </div>
+                <div class="cards-container" id="cardsContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Modal -->
+    <div class="modal" id="resultModal">
+        <div class="modal-content">
+            <div class="modal-icon" id="modalIcon">🎉</div>
+            <h2 class="modal-title" id="modalTitle">Selamat!</h2>
+            <p class="modal-message" id="modalMessage">Kamu berhasil menyelesaikan permainan!</p>
+            <div class="modal-stats">
+                <p>Tingkat Kesulitan: <strong id="statDifficulty">-</strong></p>
+                <p>Score: <strong id="statScore">-</strong></p>
+                <p>Waktu: <strong id="statTime">-</strong></p>
+                <p>Kesalahan: <strong id="statErrors">-</strong></p>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn play-again-btn" onclick="playAgain()">🔄 Main Lagi</button>
+                <button class="modal-btn menu-btn" onclick="backToMenuFromModal()">🏠 Menu Utama</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        let difficulty = '';
+        let cardsArray = [];
+        let flippedCards = [];
+        let matchedSets = [];
+        let canFlip = true;
+        let score = 0;
+        let errors = 0;
+        let maxErrors = 0;
+        let matchCount = 2; // Jumlah kartu yang harus dicocokkan
+        let timer = 0;
+        let timerInterval = null;
+        let previewTimeout = null;
+        let countdownInterval = null;
+
+        // Emojis for cards
+        const emojis = [
+            '🍎', '🍌', '🍇', '🍊', '🍓', '🍒', '🍑', '🍍',
+            '🥝', '🥑', '🍆', '🥕', '🌽', '🥦', '🥒', '🌶️',
+            '🍕', '🍔', '🍟', '🌭', '🍿', '🧁', '🍰', '🎂',
+            '🍪', '🍩', '🍫', '🍬', '🍭', '🍮', '🍯', '🍼'
+        ];
+
+        // Start game based on difficulty
+        function startGame(level) {
+            difficulty = level;
+            
+            // Set game parameters based on difficulty
+            if (level === 'easy') {
+                matchCount = 2;
+                maxErrors = 3;
+                cardsArray = createCardArray(5, matchCount); // 5 pairs, 2 cards each = 10 cards
+            } else if (level === 'normal') {
+                matchCount = 3;
+                maxErrors = 4;
+                cardsArray = createCardArray(6, matchCount); // 6 sets, 3 cards each = 18 cards
+            } else if (level === 'hard') {
+                matchCount = 4;
+                maxErrors = 5;
+                cardsArray = createCardArray(8, matchCount); // 8 sets, 4 cards each = 32 cards
+            }
+
+            // Reset game state
+            flippedCards = [];
+            matchedSets = [];
+            score = 0;
+            errors = 0;
+            timer = 0;
+
+            // Show game screen
+            document.getElementById('difficultyScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'block';
+
+            // Initialize game
+            updateHealth();
+            updateScore();
+            renderCards();
+            startPreview();
+        }
+
+        // Start preview (show all cards)
+        function startPreview() {
+            const cards = document.querySelectorAll('.card');
+            const overlay = document.getElementById('previewOverlay');
+            const countdownEl = document.getElementById('countdown');
+            
+            // Show preview overlay
+            overlay.classList.remove('hide');
+            
+            // Flip all cards to show
+            cards.forEach(card => {
+                card.classList.add('flipped');
+            });
+
+            // Preview duration based on difficulty
+            let previewTime = difficulty === 'easy' ? 5 : difficulty === 'normal' ? 7 : 10;
+            let countdown = 3;
+
+            // Countdown before hiding cards
+            countdownInterval = setInterval(() => {
+                countdown--;
+                if (countdown > 0) {
+                    countdownEl.textContent = countdown;
+                } else {
+                    countdownEl.textContent = 'GO!';
+                    clearInterval(countdownInterval);
+                }
+            }, 1000);
+
+            // Hide all cards after preview
+            previewTimeout = setTimeout(() => {
+                cards.forEach(card => {
+                    card.classList.remove('flipped');
+                });
+                
+                overlay.classList.add('hide');
+                
+                // Remove overlay after animation
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, 500);
+                
+                // Start timer after preview
+                startTimer();
+            }, previewTime * 1000);
+        }
+
+        // Create card array
+        function createCardArray(numSets, cardsPerSet) {
+            const cards = [];
+            const usedEmojis = emojis.slice(0, numSets);
+
+            usedEmojis.forEach((emoji, index) => {
+                for (let i = 0; i < cardsPerSet; i++) {
+                    cards.push({
+                        id: `${index}-${i}`,
+                        emoji: emoji,
+                        setId: index
+                    });
+                }
+            });
+
+            return shuffleArray(cards);
+        }
+
+        // Shuffle array
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Render cards
+        function renderCards() {
+            const container = document.getElementById('cardsContainer');
+            container.className = `cards-container ${difficulty}`;
+            container.innerHTML = '';
+
+            cardsArray.forEach((card, index) => {
+                const cardElement = document.createElement('div');
+                cardElement.className = 'card';
+                cardElement.dataset.index = index;
+                cardElement.dataset.setId = card.setId;
+                cardElement.innerHTML = `
+                    <div class="card-front">❓</div>
+                    <div class="card-back">${card.emoji}</div>
+                `;
+                cardElement.addEventListener('click', () => flipCard(index));
+                container.appendChild(cardElement);
+            });
+        }
+
+        // Flip card
+        function flipCard(index) {
+            if (!canFlip) return;
+            
+            const card = document.querySelectorAll('.card')[index];
+            
+            // Don't flip if already flipped or matched
+            if (card.classList.contains('flipped') || card.classList.contains('matched')) {
+                return;
+            }
+
+            // Flip the card
+            card.classList.add('flipped');
+            flippedCards.push({ index, setId: card.dataset.setId });
+
+            // Check if we have enough cards flipped
+            if (flippedCards.length === matchCount) {
+                canFlip = false;
+                setTimeout(checkMatch, 800);
+            }
+        }
+
+        // Check if cards match
+        function checkMatch() {
+            const cards = document.querySelectorAll('.card');
+            const firstSetId = flippedCards[0].setId;
+            
+            // Check if all flipped cards have the same setId
+            const allMatch = flippedCards.every(card => card.setId === firstSetId);
+
+            if (allMatch) {
+                // Match found! ✅
+                flippedCards.forEach(card => {
+                    cards[card.index].classList.add('matched');
+                });
+                
+                matchedSets.push(firstSetId);
+                score += 10 * matchCount;
+                updateScore();
+
+                // Check win condition
+                const totalSets = difficulty === 'easy' ? 5 : difficulty === 'normal' ? 6 : 8;
+                if (matchedSets.length === totalSets) {
+                    setTimeout(() => endGame(true), 500);
+                }
+                
+                // Reset for next turn
+                flippedCards = [];
+                canFlip = true;
+            } else {
+                // No match! ❌
+                // Add shake animation to wrong cards
+                flippedCards.forEach(card => {
+                    cards[card.index].classList.add('wrong');
+                });
+
+                // Remove shake animation after it completes
+                setTimeout(() => {
+                    flippedCards.forEach(card => {
+                        cards[card.index].classList.remove('wrong');
+                    });
+                }, 500);
+
+                // Flip cards back
+                setTimeout(() => {
+                    flippedCards.forEach(card => {
+                        cards[card.index].classList.remove('flipped');
+                    });
+                }, 600);
+
+                // Reduce health
+                setTimeout(() => {
+                    errors++;
+                    updateHealth();
+                    
+                    // Check lose condition
+                    if (errors >= maxErrors) {
+                        setTimeout(() => endGame(false), 300);
+                    } else {
+                        // Reset for next turn if game not over
+                        flippedCards = [];
+                        canFlip = true;
+                    }
+                }, 650);
+            }
+        }
+
+        // Update health display
+        function updateHealth() {
+            const container = document.getElementById('healthContainer');
+            container.innerHTML = '';
+
+            for (let i = 0; i < maxErrors; i++) {
+                const heart = document.createElement('span');
+                heart.className = 'heart';
+                if (i < errors) {
+                    heart.classList.add('lost');
+                }
+                heart.textContent = '❤️';
+                container.appendChild(heart);
+            }
+        }
+
+        // Update score
+        function updateScore() {
+            document.getElementById('score').textContent = score;
+        }
+
+        // Timer
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timer++;
+                const minutes = Math.floor(timer / 60);
+                const seconds = timer % 60;
+                document.getElementById('timer').textContent = 
+                    `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        // End game
+        function endGame(won) {
+            stopTimer();
+            canFlip = false;
+
+            const modal = document.getElementById('resultModal');
+            const modalIcon = document.getElementById('modalIcon');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMessage = document.getElementById('modalMessage');
+
+            if (won) {
+                modalIcon.textContent = '🎉';
+                modalTitle.textContent = 'SELAMAT!';
+                modalTitle.className = 'modal-title win';
+                modalMessage.textContent = 'Kamu berhasil menyelesaikan permainan!';
+                createConfetti();
+            } else {
+                modalIcon.textContent = '😢';
+                modalTitle.textContent = 'GAME OVER';
+                modalTitle.className = 'modal-title lose';
+                modalMessage.textContent = 'Kesempatan habis! Coba lagi!';
+            }
+
+            // Update stats
+            document.getElementById('statDifficulty').textContent = 
+                difficulty.toUpperCase();
+            document.getElementById('statScore').textContent = score;
+            document.getElementById('statTime').textContent = 
+                document.getElementById('timer').textContent;
+            document.getElementById('statErrors').textContent = 
+                `${errors}/${maxErrors}`;
+
+            modal.classList.add('show');
+        }
+
+        // Confetti effect
+        function createConfetti() {
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+            
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.style.position = 'fixed';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.top = '-10px';
+                    confetti.style.width = '10px';
+                    confetti.style.height = '10px';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.zIndex = '9999';
+                    confetti.style.borderRadius = '50%';
+                    confetti.style.pointerEvents = 'none';
+                    
+                    const animation = confetti.animate([
+                        { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                        { transform: `translateY(100vh) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+                    ], {
+                        duration: 3000,
+                        easing: 'ease-in'
+                    });
+                    
+                    document.body.appendChild(confetti);
+                    
+                    animation.onfinish = () => confetti.remove();
+                }, i * 20);
+            }
+        }
+
+        // Back to menu
+        function backToMenu() {
+            if (confirm('Yakin ingin kembali ke menu? Progress akan hilang!')) {
+                // Clear all timers
+                stopTimer();
+                if (previewTimeout) clearTimeout(previewTimeout);
+                if (countdownInterval) clearInterval(countdownInterval);
+                
+                // Reset all game states
+                flippedCards = [];
+                matchedSets = [];
+                canFlip = true;
+                score = 0;
+                errors = 0;
+                
+                // Reset overlay
+                const overlay = document.getElementById('previewOverlay');
+                overlay.style.display = 'flex';
+                overlay.classList.remove('hide');
+                document.getElementById('countdown').textContent = '3';
+                
+                // Clear cards container
+                document.getElementById('cardsContainer').innerHTML = '';
+                
+                // Hide game screen and show difficulty screen
+                document.getElementById('gameScreen').style.display = 'none';
+                document.getElementById('difficultyScreen').style.display = 'block';
+            }
+        }
+
+        // Play again
+        function playAgain() {
+            document.getElementById('resultModal').classList.remove('show');
+            
+            // Reset preview overlay
+            const overlay = document.getElementById('previewOverlay');
+            overlay.style.display = 'flex';
+            overlay.classList.remove('hide');
+            document.getElementById('countdown').textContent = '3';
+            
+            startGame(difficulty);
+        }
+
+        // Back to menu from modal
+        function backToMenuFromModal() {
+            document.getElementById('resultModal').classList.remove('show');
+            
+            // Clear all timers
+            stopTimer();
+            if (previewTimeout) clearTimeout(previewTimeout);
+            if (countdownInterval) clearInterval(countdownInterval);
+            
+            // Reset all game states
+            flippedCards = [];
+            matchedSets = [];
+            canFlip = true;
+            score = 0;
+            errors = 0;
+            
+            // Reset overlay
+            const overlay = document.getElementById('previewOverlay');
+            overlay.style.display = 'flex';
+            overlay.classList.remove('hide');
+            document.getElementById('countdown').textContent = '3';
+            
+            // Clear cards container
+            document.getElementById('cardsContainer').innerHTML = '';
+            
+            // Hide game screen and show difficulty screen
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('difficultyScreen').style.display = 'block';
+        }
+    </script>
+
+</body>
+</html>

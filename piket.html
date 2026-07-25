@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Jadwal Piket - X TKJ 3</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Piket Specific Styles */
+        .piket-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        .piket-header {
+            text-align: center;
+            padding: 40px 20px 20px;
+        }
+
+        .piket-title {
+            font-size: 2.5em;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.4));
+        }
+
+        .dark-mode .piket-title {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .piket-subtitle {
+            color: var(--text-color);
+            font-size: 1.1em;
+            opacity: 0.8;
+        }
+
+        /* Day Cards Grid */
+        .piket-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .day-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .day-card:nth-child(1) { animation-delay: 0.1s; }
+        .day-card:nth-child(2) { animation-delay: 0.15s; }
+        .day-card:nth-child(3) { animation-delay: 0.2s; }
+        .day-card:nth-child(4) { animation-delay: 0.25s; }
+        .day-card:nth-child(5) { animation-delay: 0.3s; }
+        .day-card:nth-child(6) { animation-delay: 0.35s; }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .day-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .dark-mode .day-card::before {
+            background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+
+        .day-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.25);
+        }
+
+        .day-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Day Header */
+        .day-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .dark-mode .day-header {
+            border-bottom-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .day-name {
+            font-size: 1.6em;
+            font-weight: 700;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .day-icon {
+            font-size: 1.2em;
+        }
+
+        .student-count {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .dark-mode .student-count {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+
+        /* Students List */
+        .students-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .student-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .dark-mode .student-item {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+        }
+
+        .student-item:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.12) 100%);
+            border-left-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .dark-mode .student-item:hover {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.18) 0%, rgba(139, 92, 246, 0.18) 100%);
+            border-left-color: #3b82f6;
+        }
+
+        .student-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.9em;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+        }
+
+        .dark-mode .student-number {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+
+        .student-name {
+            color: var(--text-color);
+            font-weight: 500;
+            font-size: 0.95em;
+            flex: 1;
+        }
+
+        .student-emoji {
+            font-size: 1.1em;
+            opacity: 0.7;
+        }
+
+        /* Current Day Highlight */
+        .day-card.today {
+            border: 2px solid #667eea;
+            box-shadow: 0 10px 35px rgba(102, 126, 234, 0.3);
+        }
+
+        .dark-mode .day-card.today {
+            border-color: #3b82f6;
+            box-shadow: 0 10px 35px rgba(59, 130, 246, 0.4);
+        }
+
+        .day-card.today .student-count::after {
+            content: '● Hari Ini';
+            margin-left: 10px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 1em;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+            animation: pulse 2s ease-in-out infinite;
+            white-space: nowrap;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(0.98); }
+        }
+
+        /* Info Banner */
+        .info-banner {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .dark-mode .info-banner {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+
+        .info-icon {
+            font-size: 2em;
+            flex-shrink: 0;
+        }
+
+        .info-text {
+            color: var(--text-color);
+            line-height: 1.6;
+            text-shadow: none;
+        }
+
+        .info-text strong {
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .dark-mode .info-text strong {
+            color: #3b82f6;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .piket-title {
+                font-size: 2em;
+            }
+
+            .piket-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .day-card {
+                padding: 20px;
+            }
+
+            .day-name {
+                font-size: 1.4em;
+            }
+
+            .info-banner {
+                flex-direction: column;
+                text-align: center;
+                padding: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .piket-container {
+                padding: 15px;
+                padding-bottom: 100px;
+            }
+
+            .piket-header {
+                padding: 30px 15px 15px;
+            }
+
+            .piket-title {
+                font-size: 1.8em;
+            }
+
+            .piket-subtitle {
+                font-size: 1em;
+            }
+
+            .day-card {
+                padding: 18px;
+            }
+
+            .day-name {
+                font-size: 1.3em;
+            }
+
+            .student-item {
+                padding: 10px 12px;
+            }
+
+            .student-number {
+                width: 28px;
+                height: 28px;
+                font-size: 0.85em;
+            }
+
+            .student-name {
+                font-size: 0.9em;
+            }
+
+            .info-banner {
+                padding: 15px;
+            }
+
+            .info-icon {
+                font-size: 1.8em;
+            }
+        }
+
+        @media (max-width: 375px) {
+            .day-card.today::after {
+                font-size: 0.7em;
+                padding: 4px 8px;
+            }
+
+            .student-count {
+                font-size: 0.75em;
+                padding: 5px 12px;
+            }
+
+            .day-card.today .student-count::after {
+                font-size: 0.85em;
+                padding: 4px 8px;
+                margin-left: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Slideshow -->
+    <div class="bg-slideshow" id="bgSlideshow"></div>
+
+    <!-- Top Navigation Bar -->
+    <!-- Top Navigation Bar -->
+    <nav class="top-nav">
+        <div class="nav-left">
+            <div class="date-time-display" id="dateTimeDisplay">
+                <div class="current-date" id="currentDate">Loading...</div>
+                <div class="current-time" id="currentTime">Loading...</div>
+            </div>
+        </div>
+        <div class="nav-right">
+            <button id="theme-toggle" class="theme-toggle">
+                <div class="toggle-track">
+                    <div class="toggle-thumb">
+                        <span class="icon sun">☀️</span>
+                        <span class="icon moon">🌙</span>
+                    </div>
+                </div>
+            </button>
+        </div>
+    </nav>
+
+    <div class="piket-header">
+        <h1 class="piket-title">Jadwal Piket</h1>
+        <p class="piket-subtitle">Jadwal Piket Harian Kelas X TKJ 3</p>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <span class="nav-icon"><img src="Images/Icon/Siswa.png" alt="Siswa"></span>
+            <span class="nav-label">Siswa</span>
+        </a>
+        <a href="jadwal.html" class="nav-item">
+            <span class="nav-icon"><img src="Images/Icon/Jadwal.png" alt="Jadwal"></span>
+            <span class="nav-label">Jadwal</span>
+        </a>
+        <a href="piket.html" class="nav-item active">
+            <span class="nav-icon"><img src="Images/Icon/Piket.png" alt="Piket"></span>
+            <span class="nav-label">Piket</span>
+        </a>
+        <a href="tugas.html" class="nav-item">
+            <span class="nav-icon"><img src="Images/Icon/Tugas.png" alt="Tugas"></span>
+            <span class="nav-label">Tugas</span>
+        </a>
+        <a href="info.html" class="nav-item">
+            <span class="nav-icon"><img src="Images/Icon/Info.png" alt="Info"></span>
+            <span class="nav-label">Info</span>
+        </a>
+    </nav>
+
+    <div class="piket-container">
+
+        <!-- Info Banner -->
+        <div class="info-banner">
+            <div class="info-icon">💡</div>
+            <div class="info-text">
+                <strong>Catatan:</strong> Bagi siswa yang tidak melakukan piket di jadwalnya, maka akan dikenakan sanksi berupa denda senilai Rp 5,000 .
+            </div>
+        </div>
+
+        <!-- Piket Schedule Grid -->
+        <div class="piket-grid">
+            
+            <!-- Senin -->
+            <div class="day-card" data-day="senin">
+                <div class="day-header">
+                    <div class="day-name">
+                        <span class="day-icon">🌅</span>
+                        Senin
+                    </div>
+                    <div class="student-count">6 orang</div>
+                </div>
+                <div class="students-list">
+                    <div class="student-item">
+                        <div class="student-number">1</div>
+                        <div class="student-name">Abdul Rohim</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                    <div class="student-item">
+                        <div class="student-number">2</div>
+                        <div class="student-name">Abdullah Khaerul Azzam</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                    <div class="student-item">
+                        <div class="student-number">3</div>
+                        <div class="student-name">Aditya Pratama Suhendi</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                    <div class="student-item">
+                        <div class="student-number">4</div>
+                        <div class="student-name">Ahmad Zaky Munawar</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                    <div class="student-item">
+                        <div class="student-number">5</div>
+                        <div class="student-name">Aldiansyah</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                    <div class="student-item">
+                        <div class="student-number">6</div>
+                        <div class="student-name">Alfian Aditiansyah</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Selasa -->
+            <div class="day-card" data-day="selasa">
+                <div class="day-header">
+                    <div class="day-name">
+                        <span class="day-icon">🌤️</span>
+                        Selasa
+                    </div>
+                    <div class="student-count">5 orang</div>
+                </div>
+                <div class="students-list">
+                    <div class="student-item">
+                        <div class="student-number">7</div>
+                        <div class="student-name">Arga Fazri Ramadhan</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                    <div class="student-item">
+                        <div class="student-number">8</div>
+                        <div class="student-name">Axelle Ashwan Finnegan</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                    <div class="student-item">
+                        <div class="student-number">9</div>
+                        <div class="student-name">Bagus Putra Ramadhan</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                    <div class="student-item">
+                        <div class="student-number">10</div>
+                        <div class="student-name">Bayu Lutfiadi</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                    <div class="student-item">
+                        <div class="student-number">11</div>
+                        <div class="student-name">Farel Fadilah</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rabu -->
+            <div class="day-card" data-day="rabu">
+                <div class="day-header">
+                    <div class="day-name">
+                        <span class="day-icon">☀️</span>
+                        Rabu
+                    </div>
+                    <div class="student-count">5 orang</div>
+                </div>
+                <div class="students-list">
+                    <div class="student-item">
+                        <div class="student-number">12</div>
+                        <div class="student-name">Farrel Surya Ramadhan</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                    <div class="student-item">
+                        <div class="student-number">13</div>
+                        <div class="student-name">Garrick Elbert Chandra</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                    <div class="student-item">
+                        <div class="student-number">14</div>
+                        <div class="student-name">Haikal Fadillah</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                    <div class="student-item">
+                        <div class="student-number">15</div>
+                        <div class="student-name">Ihram Maqil Ghaisan</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                    <div class="student-item">
+                        <div class="student-number">16</div>
+                        <div class="student-name">Isabil Nuh Ardiansiah</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kamis -->
+            <div class="day-card" data-day="kamis">
+                <div class="day-header">
+                    <div class="day-name">
+                        <span class="day-icon">🌞</span>
+                        Kamis
+                    </div>
+                    <div class="student-count">5 orang</div>
+                </div>
+                <div class="students-list">
+                    <div class="student-item">
+                        <div class="student-number">17</div>
+                        <div class="student-name">Margianto</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                    <div class="student-item">
+                        <div class="student-number">18</div>
+                        <div class="student-name">Muhamad Abi Fadilah</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                    <div class="student-item">
+                        <div class="student-number">19</div>
+                        <div class="student-name">Muhamad Arif Kurniawan</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                    <div class="student-item">
+                        <div class="student-number">20</div>
+                        <div class="student-name">Muhamad Hajik</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                    <div class="student-item">
+                        <div class="student-number">21</div>
+                        <div class="student-name">Muhammad Alfazar</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Jumat -->
+            <div class="day-card" data-day="jumat">
+                <div class="day-header">
+                    <div class="day-name">
+                        <span class="day-icon">🌤️</span>
+                        Jumat
+                    </div>
+                    <div class="student-count">5 orang</div>
+                </div>
+                <div class="students-list">
+                    <div class="student-item">
+                        <div class="student-number">22</div>
+                        <div class="student-name">Muhammad Fahrel Narwis</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                    <div class="student-item">
+                        <div class="student-number">23</div>
+                        <div class="student-name">Muhammad Nabil</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                    <div class="student-item">
+                        <div class="student-number">24</div>
+                        <div class="student-name">Muhammad Zaky Muzakir</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                    <div class="student-item">
+                        <div class="student-number">25</div>
+                        <div class="student-name">Nadja Mudin Al Ayyuby Nasution</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                    <div class="student-item">
+                        <div class="student-number">26</div>
+                        <div class="student-name">Raditya Ilham Pratama</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sabtu -->
+            <div class="day-card" data-day="sabtu">
+                <div class="day-header">
+                    <div class="day-name">
+                        <span class="day-icon">🌅</span>
+                        Sabtu
+                    </div>
+                    <div class="student-count">4 orang</div>
+                </div>
+                <div class="students-list">
+                    <div class="student-item">
+                        <div class="student-number">27</div>
+                        <div class="student-name">Rasya Putra Bulivar</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                    <div class="student-item">
+                        <div class="student-number">28</div>
+                        <div class="student-name">Ridho Yudi Al Khafiz</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                    <div class="student-item">
+                        <div class="student-number">29</div>
+                        <div class="student-name">Sendy Arkana Bahrudin</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                    <div class="student-item">
+                        <div class="student-number">30</div>
+                        <div class="student-name">Vincent</div>
+                        <div class="student-emoji">🧹</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        // Background Slideshow
+        document.addEventListener('DOMContentLoaded', function() {
+            const bgSlideshow = document.getElementById('bgSlideshow');
+            
+            const images = [
+                'Images/Background/1.jpg',
+                'Images/Background/2.jpg',
+                'Images/Background/3.jpg',
+                'Images/Background/4.jpg',
+                'Images/Background/5.jpg',
+                'Images/Background/6.jpg'
+            ];
+            
+            images.forEach((img, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'bg-slide';
+                slide.style.backgroundImage = `url('${img}')`;
+                if (index === 0) slide.classList.add('active');
+                bgSlideshow.appendChild(slide);
+            });
+
+            // ===== DATE TIME UPDATE =====
+            function updateDateTime() {
+                const now = new Date();
+                const options = { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                };
+                const dateString = now.toLocaleDateString('id-ID', options);
+                const timeString = now.toLocaleTimeString('id-ID', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                
+                document.getElementById('currentDate').textContent = dateString;
+                document.getElementById('currentTime').textContent = timeString;
+            }
+            
+            // Update immediately and then every second
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            
+            let currentSlide = 0;
+            const slides = document.querySelectorAll('.bg-slide');
+            
+            setInterval(() => {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            }, 6000);
+
+            // Dark mode toggle
+            const themeToggle = document.getElementById('theme-toggle');
+            const savedTheme = localStorage.getItem('theme');
+            
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+            
+            themeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+                localStorage.setItem('theme', 
+                    document.body.classList.contains('dark-mode') ? 'dark' : 'light'
+                );
+            });
+
+            // ===== DATE TIME UPDATE =====
+            function updateDateTime() {
+                const now = new Date();
+                const options = { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                };
+                const dateString = now.toLocaleDateString('id-ID', options);
+                const timeString = now.toLocaleTimeString('id-ID', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                
+                document.getElementById('currentDate').textContent = dateString;
+                document.getElementById('currentTime').textContent = timeString;
+            }
+            
+            // Update immediately and then every second
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+
+            // Highlight current day
+            const days = ['minggu', 'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'];
+            const today = new Date().getDay();
+            const currentDay = days[today];
+            
+            // Tambahkan class 'today' ke card hari ini
+            if (currentDay !== 'minggu') {
+                const todayCard = document.querySelector(`.day-card[data-day="${currentDay}"]`);
+                if (todayCard) {
+                    todayCard.classList.add('today');
+                }
+            }
+
+            // Nav item click handler
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    const href = item.getAttribute('href');
+                    if (href === '#') {
+                        e.preventDefault();
+                    }
+                    requestAnimationFrame(() => {
+                        navItems.forEach(nav => nav.classList.remove('active'));
+                        item.classList.add('active');
+                    });
+
+            // ===== DATE TIME UPDATE =====
+            function updateDateTime() {
+                const now = new Date();
+                const options = { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                };
+                const dateString = now.toLocaleDateString('id-ID', options);
+                const timeString = now.toLocaleTimeString('id-ID', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                
+                document.getElementById('currentDate').textContent = dateString;
+                document.getElementById('currentTime').textContent = timeString;
+            }
+            
+            // Update immediately and then every second
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+                });
+
+            // ===== DATE TIME UPDATE =====
+            function updateDateTime() {
+                const now = new Date();
+                const options = { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                };
+                const dateString = now.toLocaleDateString('id-ID', options);
+                const timeString = now.toLocaleTimeString('id-ID', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                
+                document.getElementById('currentDate').textContent = dateString;
+                document.getElementById('currentTime').textContent = timeString;
+            }
+            
+            // Update immediately and then every second
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            });
+
+            // ===== DATE TIME UPDATE =====
+            function updateDateTime() {
+                const now = new Date();
+                const options = { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                };
+                const dateString = now.toLocaleDateString('id-ID', options);
+                const timeString = now.toLocaleTimeString('id-ID', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                
+                document.getElementById('currentDate').textContent = dateString;
+                document.getElementById('currentTime').textContent = timeString;
+            }
+            
+            // Update immediately and then every second
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+        });
+
+            // ===== DATE TIME UPDATE =====
+            function updateDateTime() {
+                const now = new Date();
+                const options = { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                };
+                const dateString = now.toLocaleDateString('id-ID', options);
+                const timeString = now.toLocaleTimeString('id-ID', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                
+                document.getElementById('currentDate').textContent = dateString;
+                document.getElementById('currentTime').textContent = timeString;
+            }
+            
+            // Update immediately and then every second
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+    </script>
+
+</body>
+</html>

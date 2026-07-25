@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - X TKJ 3</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+    <div class="page-wrap">
+        <form id="loginForm" class="form-card">
+            <h2>Login X TKJ 3</h2>
+            <div id="loginError" class="form-error"></div>
+
+            <div class="field">
+                <label for="username">Username</label>
+                <input type="text" id="username" required autocomplete="username">
+            </div>
+
+            <div class="field">
+                <label for="password">Password</label>
+                <input type="password" id="password" required autocomplete="current-password">
+            </div>
+
+            <button type="submit" class="form-submit">Masuk</button>
+        </form>
+        <p style="text-align:center; margin-top:16px;">
+            <a href="index.html">← Kembali tanpa login</a>
+        </p>
+    </div>
+
+    <script type="module" src="js/login.js"></script>
+</body>
+</html>

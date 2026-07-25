@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tugas - X TKJ 3</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+    <div class="top-nav">
+        <div class="nav-left">
+            <a href="index.html" class="nav-btn">← Daftar Siswa</a>
+        </div>
+        <div id="navUser" class="nav-user"></div>
+    </div>
+
+    <div class="page-wrap">
+        <h1 style="text-align:center;">Daftar Tugas</h1>
+
+        <form id="addTugasForm" class="form-card hidden" style="margin-bottom:24px;">
+            <h2>Tambah Tugas</h2>
+            <div class="field"><label>Judul</label><input type="text" id="tJudul" required></div>
+            <div class="field"><label>Mapel</label><input type="text" id="tMapel"></div>
+            <div class="field"><label>Deskripsi</label><input type="text" id="tDeskripsi"></div>
+            <div class="field"><label>Deadline</label><input type="date" id="tDeadline"></div>
+            <button type="submit" class="form-submit">Tambah Tugas</button>
+        </form>
+
+        <div id="tugasList" class="tugas-list">
+            <p>Memuat tugas...</p>
+        </div>
+    </div>
+
+    <script type="module" src="js/tugas.js"></script>
+</body>
+</html>
