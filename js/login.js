@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient.js';
+import { login } from './auth.js';
 import { initBgSlideshow, initThemeToggle } from './nav.js';
 
 const GUEST_KEY = 'bantara_guest';
@@ -6,17 +6,16 @@ const GUEST_KEY = 'bantara_guest';
 const form = document.getElementById('loginForm');
 const errEl = document.getElementById('errorMessage');
 
-form.addEventListener('submit', async (e) => {
+form.addEventListener('submit', (e) => {
     e.preventDefault();
     errEl.classList.remove('show');
 
-    const username = document.getElementById('username').value.trim().toLowerCase();
+    const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
-    const email = username.includes('@') ? username : `${username}@bantara.local`;
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const success = login(username, password);
 
-    if (error) {
+    if (!success) {
         errEl.textContent = 'Username atau password salah!';
         errEl.classList.add('show');
         return;

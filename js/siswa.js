@@ -170,7 +170,7 @@ async function loadStudent() {
     await loadStudent();
 
     if (student && profile) {
-        canEdit = profile.role === 'admin' || profile.student_id === student.id;
+        canEdit = profile.role === 'admin' || profile.slug === student.slug;
     }
 
     render();
