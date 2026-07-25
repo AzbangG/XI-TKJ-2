@@ -7,22 +7,52 @@
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/app.css">
 </head>
-<body id="body">
+<body>
 
-    <div class="top-nav">
+    <div class="bg-slideshow" id="bgSlideshow"></div>
+
+    <nav class="top-nav">
         <div class="nav-left">
-            <a href="jadwal.html" class="nav-btn">Jadwal</a>
-            <a href="piket.html" class="nav-btn">Piket</a>
-            <a href="tugas.html" class="nav-btn">Tugas</a>
-            <a href="info.html" class="nav-btn">Info</a>
-            <button id="settingsBtn" class="nav-btn hidden">⚙️ Pengaturan</button>
+            <div class="date-time-display" id="dateTimeDisplay">
+                <div class="current-date" id="currentDate">Loading...</div>
+                <div class="current-time" id="currentTime">Loading...</div>
+            </div>
         </div>
-        <div id="navUser" class="nav-user"></div>
+        <div class="nav-right">
+            <div class="user-info" id="userInfo" style="display:none;">
+                <span class="user-icon">👤</span>
+                <span class="username" id="username">User</span>
+            </div>
+            <a href="login.html" id="loginLink" style="display:none;">👤 Login</a>
+            <button id="settingsBtn" class="nav-btn hidden">⚙️</button>
+            <button id="theme-toggle" class="theme-toggle">
+                <div class="toggle-track">
+                    <div class="toggle-thumb">
+                        <span class="icon sun">☀️</span>
+                        <span class="icon moon">🌙</span>
+                    </div>
+                </div>
+            </button>
+            <button id="logout-btn" class="logout-btn" style="display:none;">
+                <span>🚪</span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="header">
+        <div class="title-wrapper">
+            <h1 class="main-title">
+                <span class="title-line">Kelas</span>
+                <span class="title-line title-highlight">X TKJ 3</span>
+            </h1>
+            <div class="title-decoration"></div>
+        </div>
+        <p class="subtitle" id="socialLinks">Anak X TKJ 3 Bangun Nusantara</p>
     </div>
 
+    <nav class="bottom-nav" id="bottomNav"></nav>
+
     <div class="page-wrap">
-        <h1 style="text-align:center;">X TKJ 3</h1>
-        <div id="socialLinks" style="text-align:center; margin-bottom: 10px;"></div>
         <div id="siswaGrid" class="siswa-grid">
             <p>Memuat data siswa...</p>
         </div>

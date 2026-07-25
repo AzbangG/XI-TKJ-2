@@ -9,16 +9,49 @@
 </head>
 <body>
 
-    <div class="top-nav">
+    <div class="bg-slideshow" id="bgSlideshow"></div>
+
+    <nav class="top-nav">
         <div class="nav-left">
-            <a href="index.html" class="nav-btn">← Daftar Siswa</a>
+            <div class="date-time-display" id="dateTimeDisplay">
+                <div class="current-date" id="currentDate">Loading...</div>
+                <div class="current-time" id="currentTime">Loading...</div>
+            </div>
         </div>
-        <div id="navUser" class="nav-user"></div>
+        <div class="nav-right">
+            <div class="user-info" id="userInfo" style="display:none;">
+                <span class="user-icon">👤</span>
+                <span class="username" id="username">User</span>
+            </div>
+            <a href="login.html" id="loginLink" style="display:none;">👤 Login</a>
+            <button id="theme-toggle" class="theme-toggle">
+                <div class="toggle-track">
+                    <div class="toggle-thumb">
+                        <span class="icon sun">☀️</span>
+                        <span class="icon moon">🌙</span>
+                    </div>
+                </div>
+            </button>
+            <button id="logout-btn" class="logout-btn" style="display:none;">
+                <span>🚪</span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="header">
+        <div class="title-wrapper">
+            <h1 class="main-title">
+                <span class="title-line">Daftar</span>
+                <span class="title-line title-highlight">Tugas</span>
+            </h1>
+            <div class="title-decoration"></div>
+        </div>
+        <p class="subtitle">Kelas X TKJ 3</p>
     </div>
 
-    <div class="page-wrap">
-        <h1 style="text-align:center;">Daftar Tugas</h1>
+    <nav class="bottom-nav" id="bottomNav"></nav>
 
+    <div class="page-wrap">
         <form id="addTugasForm" class="form-card hidden" style="margin-bottom:24px;">
             <h2>Tambah Tugas</h2>
             <div class="field"><label>Judul</label><input type="text" id="tJudul" required></div>

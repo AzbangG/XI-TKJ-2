@@ -304,13 +304,13 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
 
     <!-- Background Slideshow -->
     <div class="bg-slideshow" id="bgSlideshow"></div>
 
-    <!-- Top Navigation Bar -->
     <!-- Top Navigation Bar -->
     <nav class="top-nav">
         <div class="nav-left">
@@ -320,6 +320,11 @@
             </div>
         </div>
         <div class="nav-right">
+            <div class="user-info" id="userInfo" style="display:none;">
+                <span class="user-icon">👤</span>
+                <span class="username" id="username">User</span>
+            </div>
+            <a href="login.html" id="loginLink" style="display:none;">👤 Login</a>
             <button id="theme-toggle" class="theme-toggle">
                 <div class="toggle-track">
                     <div class="toggle-thumb">
@@ -327,6 +332,9 @@
                         <span class="icon moon">🌙</span>
                     </div>
                 </div>
+            </button>
+            <button id="logout-btn" class="logout-btn" style="display:none;">
+                <span>🚪</span>
             </button>
         </div>
     </nav>
@@ -714,248 +722,39 @@
     </div>
 
     <!-- Bottom Navigation -->
-    <nav class="bottom-nav">
-        <a href="index.html" class="nav-item">
-            <span class="nav-icon"><img src="Images/Icon/Siswa.png" alt="Siswa"></span>
-            <span class="nav-label">Siswa</span>
-        </a>
-        <a href="jadwal.html" class="nav-item active">
-            <span class="nav-icon"><img src="Images/Icon/Jadwal.png" alt="Jadwal"></span>
-            <span class="nav-label">Jadwal</span>
-        </a>
-        <a href="piket.html" class="nav-item">
-            <span class="nav-icon"><img src="Images/Icon/Piket.png" alt="Piket"></span>
-            <span class="nav-label">Piket</span>
-        </a>
-        <a href="tugas.html" class="nav-item">
-            <span class="nav-icon"><img src="Images/Icon/Tugas.png" alt="Tugas"></span>
-            <span class="nav-label">Tugas</span>
-        </a>
-        <a href="info.html" class="nav-item">
-            <span class="nav-icon"><img src="Images/Icon/Info.png" alt="Info"></span>
-            <span class="nav-label">Info</span>
-        </a>
-    </nav>
+    <nav class="bottom-nav" id="bottomNav"></nav>
 
-    <script>
-        // Background Slideshow
+    <script type="module">
+        import { initNav } from './js/nav.js';
+        initNav();
+
         document.addEventListener('DOMContentLoaded', function() {
-            const bgSlideshow = document.getElementById('bgSlideshow');
-            
-            const images = [
-                'Images/Background/1.jpg',
-                'Images/Background/2.jpg',
-                'Images/Background/3.jpg',
-                'Images/Background/4.jpg',
-                'Images/Background/5.jpg',
-                'Images/Background/6.jpg'
-            ];
-            
-            images.forEach((img, index) => {
-                const slide = document.createElement('div');
-                slide.className = 'bg-slide';
-                slide.style.backgroundImage = `url('${img}')`;
-                slide.style.animationDelay = `${index * 6}s`;
-                if (index === 0) slide.classList.add('active');
-                bgSlideshow.appendChild(slide);
-            });
-
-            // ===== DATE TIME UPDATE =====
-            function updateDateTime() {
-                const now = new Date();
-                const options = { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                };
-                const dateString = now.toLocaleDateString('id-ID', options);
-                const timeString = now.toLocaleTimeString('id-ID', { 
-                    hour: '2-digit', 
-                    minute: '2-digit',
-                    second: '2-digit'
-                });
-                
-                document.getElementById('currentDate').textContent = dateString;
-                document.getElementById('currentTime').textContent = timeString;
-            }
-            
-            // Update immediately and then every second
-            updateDateTime();
-            setInterval(updateDateTime, 1000);
-            
-            let currentSlide = 0;
-            setInterval(() => {
-                const slides = document.querySelectorAll('.bg-slide');
-                slides[currentSlide].classList.remove('active');
-                currentSlide = (currentSlide + 1) % slides.length;
-                slides[currentSlide].classList.add('active');
-            }, 6000);
-
-            // Dark mode toggle
-            const themeToggle = document.getElementById('theme-toggle');
-            const savedTheme = localStorage.getItem('theme');
-            
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark-mode');
-            }
-            
-            themeToggle.addEventListener('click', () => {
-                document.body.classList.toggle('dark-mode');
-                
-                if (document.body.classList.contains('dark-mode')) {
-                    localStorage.setItem('theme', 'dark');
-                } else {
-                    localStorage.setItem('theme', 'light');
-                }
-            });
-
-            // ===== DATE TIME UPDATE =====
-            function updateDateTime() {
-                const now = new Date();
-                const options = { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                };
-                const dateString = now.toLocaleDateString('id-ID', options);
-                const timeString = now.toLocaleTimeString('id-ID', { 
-                    hour: '2-digit', 
-                    minute: '2-digit',
-                    second: '2-digit'
-                });
-                
-                document.getElementById('currentDate').textContent = dateString;
-                document.getElementById('currentTime').textContent = timeString;
-            }
-            
-            // Update immediately and then every second
-            updateDateTime();
-            setInterval(updateDateTime, 1000);
-
-            // Day Selector
             const dayButtons = document.querySelectorAll('.day-btn');
             const scheduleContents = document.querySelectorAll('.schedule-content');
 
             dayButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const selectedDay = button.getAttribute('data-day');
-                    
-                    // Remove active class from all buttons
                     dayButtons.forEach(btn => btn.classList.remove('active'));
                     button.classList.add('active');
-                    
-                    // Hide all schedule contents
                     scheduleContents.forEach(content => content.classList.remove('active'));
-                    
-                    // Show selected day schedule
                     const selectedContent = document.querySelector(`.schedule-content[data-day="${selectedDay}"]`);
-                    if (selectedContent) {
-                        selectedContent.classList.add('active');
-                    }
+                    if (selectedContent) selectedContent.classList.add('active');
                 });
-
-            // ===== DATE TIME UPDATE =====
-            function updateDateTime() {
-                const now = new Date();
-                const options = { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                };
-                const dateString = now.toLocaleDateString('id-ID', options);
-                const timeString = now.toLocaleTimeString('id-ID', { 
-                    hour: '2-digit', 
-                    minute: '2-digit',
-                    second: '2-digit'
-                });
-                
-                document.getElementById('currentDate').textContent = dateString;
-                document.getElementById('currentTime').textContent = timeString;
-            }
-            
-            // Update immediately and then every second
-            updateDateTime();
-            setInterval(updateDateTime, 1000);
             });
 
-            // ===== DATE TIME UPDATE =====
-            function updateDateTime() {
-                const now = new Date();
-                const options = { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                };
-                const dateString = now.toLocaleDateString('id-ID', options);
-                const timeString = now.toLocaleTimeString('id-ID', { 
-                    hour: '2-digit', 
-                    minute: '2-digit',
-                    second: '2-digit'
-                });
-                
-                document.getElementById('currentDate').textContent = dateString;
-                document.getElementById('currentTime').textContent = timeString;
-            }
-            
-            // Update immediately and then every second
-            updateDateTime();
-            setInterval(updateDateTime, 1000);
-
-            // Auto select current day
             const days = ['minggu', 'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'];
-            const today = new Date().getDay();
-            const currentDay = days[today];
-            
-            // Tambahkan badge "Hari Ini" ke tombol hari saat ini
+            const currentDay = days[new Date().getDay()];
+
             if (currentDay !== 'minggu') {
                 const todayButton = document.querySelector(`.day-btn[data-day="${currentDay}"]`);
-                if (todayButton) {
-                    todayButton.classList.add('today');
-                }
+                if (todayButton) todayButton.classList.add('today');
             }
-            
-            // Jika hari Minggu, default ke Senin
-            if (currentDay === 'minggu') {
-                const mondayButton = document.querySelector('.day-btn[data-day="senin"]');
-                if (mondayButton) {
-                    mondayButton.click();
-                }
-            } else {
-                // Pilih hari saat ini (termasuk Sabtu)
-                const todayButton = document.querySelector(`.day-btn[data-day="${currentDay}"]`);
-                if (todayButton) {
-                    todayButton.click();
-                }
-            }
-        });
 
-            // ===== DATE TIME UPDATE =====
-            function updateDateTime() {
-                const now = new Date();
-                const options = { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                };
-                const dateString = now.toLocaleDateString('id-ID', options);
-                const timeString = now.toLocaleTimeString('id-ID', { 
-                    hour: '2-digit', 
-                    minute: '2-digit',
-                    second: '2-digit'
-                });
-                
-                document.getElementById('currentDate').textContent = dateString;
-                document.getElementById('currentTime').textContent = timeString;
-            }
-            
-            // Update immediately and then every second
-            updateDateTime();
-            setInterval(updateDateTime, 1000);
+            const targetDay = currentDay === 'minggu' ? 'senin' : currentDay;
+            const targetButton = document.querySelector(`.day-btn[data-day="${targetDay}"]`);
+            if (targetButton) targetButton.click();
+        });
     </script>
 
 </body>

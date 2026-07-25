@@ -371,13 +371,13 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
 
     <!-- Background Slideshow -->
     <div class="bg-slideshow" id="bgSlideshow"></div>
 
-    <!-- Top Navigation Bar -->
     <!-- Top Navigation Bar -->
     <nav class="top-nav">
         <div class="nav-left">
@@ -387,6 +387,11 @@
             </div>
         </div>
         <div class="nav-right">
+            <div class="user-info" id="userInfo" style="display:none;">
+                <span class="user-icon">👤</span>
+                <span class="username" id="username">User</span>
+            </div>
+            <a href="login.html" id="loginLink" style="display:none;">👤 Login</a>
             <button id="theme-toggle" class="theme-toggle">
                 <div class="toggle-track">
                     <div class="toggle-thumb">
@@ -394,6 +399,9 @@
                         <span class="icon moon">🌙</span>
                     </div>
                 </div>
+            </button>
+            <button id="logout-btn" class="logout-btn" style="display:none;">
+                <span>🚪</span>
             </button>
         </div>
     </nav>
@@ -404,28 +412,7 @@
     </div>
 
     <!-- Bottom Navigation -->
-    <nav class="bottom-nav">
-        <a href="index.html" class="nav-item">
-            <span class="nav-icon"><img src="Images/Icon/Siswa.png" alt="Siswa"></span>
-            <span class="nav-label">Siswa</span>
-        </a>
-        <a href="jadwal.html" class="nav-item">
-            <span class="nav-icon"><img src="Images/Icon/Jadwal.png" alt="Jadwal"></span>
-            <span class="nav-label">Jadwal</span>
-        </a>
-        <a href="piket.html" class="nav-item active">
-            <span class="nav-icon"><img src="Images/Icon/Piket.png" alt="Piket"></span>
-            <span class="nav-label">Piket</span>
-        </a>
-        <a href="tugas.html" class="nav-item">
-            <span class="nav-icon"><img src="Images/Icon/Tugas.png" alt="Tugas"></span>
-            <span class="nav-label">Tugas</span>
-        </a>
-        <a href="info.html" class="nav-item">
-            <span class="nav-icon"><img src="Images/Icon/Info.png" alt="Info"></span>
-            <span class="nav-label">Info</span>
-        </a>
-    </nav>
+    <nav class="bottom-nav" id="bottomNav"></nav>
 
     <div class="piket-container">
 
@@ -672,224 +659,19 @@
 
     </div>
 
-    <script>
-        // Background Slideshow
+    <script type="module">
+        import { initNav } from './js/nav.js';
+        initNav();
+
         document.addEventListener('DOMContentLoaded', function() {
-            const bgSlideshow = document.getElementById('bgSlideshow');
-            
-            const images = [
-                'Images/Background/1.jpg',
-                'Images/Background/2.jpg',
-                'Images/Background/3.jpg',
-                'Images/Background/4.jpg',
-                'Images/Background/5.jpg',
-                'Images/Background/6.jpg'
-            ];
-            
-            images.forEach((img, index) => {
-                const slide = document.createElement('div');
-                slide.className = 'bg-slide';
-                slide.style.backgroundImage = `url('${img}')`;
-                if (index === 0) slide.classList.add('active');
-                bgSlideshow.appendChild(slide);
-            });
-
-            // ===== DATE TIME UPDATE =====
-            function updateDateTime() {
-                const now = new Date();
-                const options = { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                };
-                const dateString = now.toLocaleDateString('id-ID', options);
-                const timeString = now.toLocaleTimeString('id-ID', { 
-                    hour: '2-digit', 
-                    minute: '2-digit',
-                    second: '2-digit'
-                });
-                
-                document.getElementById('currentDate').textContent = dateString;
-                document.getElementById('currentTime').textContent = timeString;
-            }
-            
-            // Update immediately and then every second
-            updateDateTime();
-            setInterval(updateDateTime, 1000);
-            
-            let currentSlide = 0;
-            const slides = document.querySelectorAll('.bg-slide');
-            
-            setInterval(() => {
-                slides[currentSlide].classList.remove('active');
-                currentSlide = (currentSlide + 1) % slides.length;
-                slides[currentSlide].classList.add('active');
-            }, 6000);
-
-            // Dark mode toggle
-            const themeToggle = document.getElementById('theme-toggle');
-            const savedTheme = localStorage.getItem('theme');
-            
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark-mode');
-            }
-            
-            themeToggle.addEventListener('click', () => {
-                document.body.classList.toggle('dark-mode');
-                localStorage.setItem('theme', 
-                    document.body.classList.contains('dark-mode') ? 'dark' : 'light'
-                );
-            });
-
-            // ===== DATE TIME UPDATE =====
-            function updateDateTime() {
-                const now = new Date();
-                const options = { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                };
-                const dateString = now.toLocaleDateString('id-ID', options);
-                const timeString = now.toLocaleTimeString('id-ID', { 
-                    hour: '2-digit', 
-                    minute: '2-digit',
-                    second: '2-digit'
-                });
-                
-                document.getElementById('currentDate').textContent = dateString;
-                document.getElementById('currentTime').textContent = timeString;
-            }
-            
-            // Update immediately and then every second
-            updateDateTime();
-            setInterval(updateDateTime, 1000);
-
-            // Highlight current day
             const days = ['minggu', 'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'];
-            const today = new Date().getDay();
-            const currentDay = days[today];
-            
-            // Tambahkan class 'today' ke card hari ini
+            const currentDay = days[new Date().getDay()];
+
             if (currentDay !== 'minggu') {
                 const todayCard = document.querySelector(`.day-card[data-day="${currentDay}"]`);
-                if (todayCard) {
-                    todayCard.classList.add('today');
-                }
+                if (todayCard) todayCard.classList.add('today');
             }
-
-            // Nav item click handler
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => {
-                item.addEventListener('click', (e) => {
-                    const href = item.getAttribute('href');
-                    if (href === '#') {
-                        e.preventDefault();
-                    }
-                    requestAnimationFrame(() => {
-                        navItems.forEach(nav => nav.classList.remove('active'));
-                        item.classList.add('active');
-                    });
-
-            // ===== DATE TIME UPDATE =====
-            function updateDateTime() {
-                const now = new Date();
-                const options = { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                };
-                const dateString = now.toLocaleDateString('id-ID', options);
-                const timeString = now.toLocaleTimeString('id-ID', { 
-                    hour: '2-digit', 
-                    minute: '2-digit',
-                    second: '2-digit'
-                });
-                
-                document.getElementById('currentDate').textContent = dateString;
-                document.getElementById('currentTime').textContent = timeString;
-            }
-            
-            // Update immediately and then every second
-            updateDateTime();
-            setInterval(updateDateTime, 1000);
-                });
-
-            // ===== DATE TIME UPDATE =====
-            function updateDateTime() {
-                const now = new Date();
-                const options = { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                };
-                const dateString = now.toLocaleDateString('id-ID', options);
-                const timeString = now.toLocaleTimeString('id-ID', { 
-                    hour: '2-digit', 
-                    minute: '2-digit',
-                    second: '2-digit'
-                });
-                
-                document.getElementById('currentDate').textContent = dateString;
-                document.getElementById('currentTime').textContent = timeString;
-            }
-            
-            // Update immediately and then every second
-            updateDateTime();
-            setInterval(updateDateTime, 1000);
-            });
-
-            // ===== DATE TIME UPDATE =====
-            function updateDateTime() {
-                const now = new Date();
-                const options = { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                };
-                const dateString = now.toLocaleDateString('id-ID', options);
-                const timeString = now.toLocaleTimeString('id-ID', { 
-                    hour: '2-digit', 
-                    minute: '2-digit',
-                    second: '2-digit'
-                });
-                
-                document.getElementById('currentDate').textContent = dateString;
-                document.getElementById('currentTime').textContent = timeString;
-            }
-            
-            // Update immediately and then every second
-            updateDateTime();
-            setInterval(updateDateTime, 1000);
         });
-
-            // ===== DATE TIME UPDATE =====
-            function updateDateTime() {
-                const now = new Date();
-                const options = { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                };
-                const dateString = now.toLocaleDateString('id-ID', options);
-                const timeString = now.toLocaleTimeString('id-ID', { 
-                    hour: '2-digit', 
-                    minute: '2-digit',
-                    second: '2-digit'
-                });
-                
-                document.getElementById('currentDate').textContent = dateString;
-                document.getElementById('currentTime').textContent = timeString;
-            }
-            
-            // Update immediately and then every second
-            updateDateTime();
-            setInterval(updateDateTime, 1000);
     </script>
 
 </body>
