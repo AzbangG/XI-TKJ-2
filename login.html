@@ -6,29 +6,52 @@
     <title>Login - X TKJ 3</title>
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/login.css">
 </head>
 <body>
 
-    <div class="page-wrap">
-        <form id="loginForm" class="form-card">
-            <h2>Login X TKJ 3</h2>
-            <div id="loginError" class="form-error"></div>
+    <div class="bg-slideshow" id="bgSlideshow"></div>
 
-            <div class="field">
-                <label for="username">Username</label>
-                <input type="text" id="username" required autocomplete="username">
+    <button id="theme-toggle" class="theme-toggle floating-theme-toggle">
+        <div class="toggle-track">
+            <div class="toggle-thumb">
+                <span class="icon sun">☀️</span>
+                <span class="icon moon">🌙</span>
+            </div>
+        </div>
+    </button>
+
+    <div class="login-page">
+        <div class="login-container">
+            <div class="login-header">
+                <div class="login-logo">🔐</div>
+                <h1 class="login-title">Selamat Datang</h1>
+                <p class="login-subtitle">Login untuk mengakses Website Kelas X TKJ 3</p>
             </div>
 
-            <div class="field">
-                <label for="password">Password</label>
-                <input type="password" id="password" required autocomplete="current-password">
-            </div>
+            <div class="error-message" id="errorMessage">Username atau password salah!</div>
 
-            <button type="submit" class="form-submit">Masuk</button>
-        </form>
-        <p style="text-align:center; margin-top:16px;">
-            <a href="index.html">← Kembali tanpa login</a>
-        </p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" for="username">Username</label>
+                    <input type="text" id="username" class="form-input" placeholder="Masukkan username" required autocomplete="username">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" class="form-input" placeholder="Masukkan password" required autocomplete="current-password">
+                        <button type="button" class="toggle-password" id="togglePassword">👁️</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-btn">Masuk</button>
+            </form>
+
+            <div class="guest-link">
+                Atau <a href="#" id="guestLogin">masuk sebagai tamu</a>
+            </div>
+        </div>
     </div>
 
     <script type="module" src="js/login.js"></script>
