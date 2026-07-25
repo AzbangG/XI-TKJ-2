@@ -1,12 +1,10 @@
 import { supabase } from './supabaseClient.js';
-import { getSessionProfile, renderNavUser } from './auth.js';
+import { initNav } from './nav.js';
 
 const grid = document.getElementById('siswaGrid');
 const socialLinks = document.getElementById('socialLinks');
 const settingsBtn = document.getElementById('settingsBtn');
 const settingsModal = document.getElementById('settingsModal');
-
-let profile = null;
 
 async function loadSiswa() {
     const { data, error } = await supabase
@@ -49,7 +47,7 @@ async function loadSiteConfig() {
     const links = [];
     if (data.instagram_url) links.push(`<a href="${data.instagram_url}" target="_blank">Instagram</a>`);
     if (data.tiktok_url) links.push(`<a href="${data.tiktok_url}" target="_blank">TikTok</a>`);
-    socialLinks.innerHTML = links.join(' &middot; ');
+    socialLinks.innerHTML = links.length ? links.join(' &middot; ') : 'Anak X TKJ 3 Bangun Nusantara';
 
     document.getElementById('cfgBackground').value = data.background_url || '';
     document.getElementById('cfgInstagram').value = data.instagram_url || '';
@@ -76,9 +74,8 @@ document.getElementById('cfgCancel').addEventListener('click', () => {
 settingsBtn.addEventListener('click', () => settingsModal.classList.add('open'));
 
 (async () => {
-    const result = await getSessionProfile();
-    profile = result.profile;
-    renderNavUser(profile);
+    const profile = await initNav();
+    if (!profile) return;
 
     if (profile?.role === 'admin') {
         settingsBtn.classList.remove('hidden');

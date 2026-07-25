@@ -54,6 +54,19 @@ function initThemeToggle() {
     });
 }
 
+const DAY_NAMES = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+const MONTH_NAMES = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+function pad2(n) { return String(n).padStart(2, '0'); }
+
+function formatDateFallback(now) {
+    return `${DAY_NAMES[now.getDay()]}, ${now.getDate()} ${MONTH_NAMES[now.getMonth()]} ${now.getFullYear()}`;
+}
+
+function formatTimeFallback(now) {
+    return `${pad2(now.getHours())}.${pad2(now.getMinutes())}.${pad2(now.getSeconds())}`;
+}
+
 function initClock() {
     const dateEl = document.getElementById('currentDate');
     const timeEl = document.getElementById('currentTime');
@@ -61,8 +74,18 @@ function initClock() {
 
     function tick() {
         const now = new Date();
-        dateEl.textContent = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-        timeEl.textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+        try {
+            dateEl.textContent = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        } catch (e) {
+            dateEl.textContent = formatDateFallback(now);
+        }
+
+        try {
+            timeEl.textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        } catch (e) {
+            timeEl.textContent = formatTimeFallback(now);
+        }
     }
 
     tick();
@@ -106,7 +129,7 @@ function bottomNavHtml() {
     `).join('');
 }
 
-export async function initNav() {
+export async function initNav({ requireAuth = true } = {}) {
     const bottomNav = document.getElementById('bottomNav');
     if (bottomNav) bottomNav.innerHTML = bottomNavHtml();
 
@@ -115,7 +138,13 @@ export async function initNav() {
     initClock();
     highlightActiveNav();
 
-    const { profile } = await getSessionProfile();
+    const { session, profile } = await getSessionProfile();
+
+    if (requireAuth && !session) {
+        window.location.href = 'login.html';
+        return null;
+    }
+
     renderTopNavUser(profile);
     return profile;
 }

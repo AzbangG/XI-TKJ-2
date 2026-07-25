@@ -1,5 +1,5 @@
 import { supabase } from './supabaseClient.js';
-import { getSessionProfile, renderNavUser } from './auth.js';
+import { initNav } from './nav.js';
 
 const list = document.getElementById('tugasList');
 const addForm = document.getElementById('addTugasForm');
@@ -62,8 +62,9 @@ addForm.addEventListener('submit', async (e) => {
 });
 
 (async () => {
-    const { profile } = await getSessionProfile();
-    renderNavUser(profile);
+    const profile = await initNav();
+    if (!profile) return;
+
     isAdmin = profile?.role === 'admin';
     if (isAdmin) addForm.classList.remove('hidden');
     await loadTugas();

@@ -1,5 +1,5 @@
 import { supabase } from './supabaseClient.js';
-import { getSessionProfile, renderNavUser } from './auth.js';
+import { initNav } from './nav.js';
 
 const card = document.getElementById('detailCard');
 const bgMusic = document.getElementById('bgMusic');
@@ -31,6 +31,8 @@ function render() {
     }
 
     document.getElementById('pageTitle').textContent = `Detail ${student.nama} - X TKJ 3`;
+    document.getElementById('detailTitle').innerHTML =
+        `<span class="title-line">${student.nama}</span><span class="title-line title-highlight">X TKJ 3</span>`;
 
     if (student.background_url) {
         document.body.style.backgroundImage = `url(${student.background_url})`;
@@ -162,9 +164,8 @@ async function loadStudent() {
         return;
     }
 
-    const result = await getSessionProfile();
-    profile = result.profile;
-    renderNavUser(profile);
+    profile = await initNav();
+    if (!profile) return;
 
     await loadStudent();
 
