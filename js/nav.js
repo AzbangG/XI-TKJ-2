@@ -17,7 +17,7 @@ const NAV_ITEMS = [
     { href: 'info.html', icon: 'Images/Icon/Info.png', label: 'Info' },
 ];
 
-function initBgSlideshow() {
+export function initBgSlideshow() {
     const root = document.getElementById('bgSlideshow');
     if (!root) return;
 
@@ -40,7 +40,7 @@ function initBgSlideshow() {
     }, 6000);
 }
 
-function initThemeToggle() {
+export function initThemeToggle() {
     const toggle = document.getElementById('theme-toggle');
     if (!toggle) return;
 
@@ -129,6 +129,8 @@ function bottomNavHtml() {
     `).join('');
 }
 
+const GUEST_KEY = 'bantara_guest';
+
 export async function initNav({ requireAuth = true } = {}) {
     const bottomNav = document.getElementById('bottomNav');
     if (bottomNav) bottomNav.innerHTML = bottomNavHtml();
@@ -139,12 +141,13 @@ export async function initNav({ requireAuth = true } = {}) {
     highlightActiveNav();
 
     const { session, profile } = await getSessionProfile();
+    const isGuest = sessionStorage.getItem(GUEST_KEY) === 'true';
 
-    if (requireAuth && !session) {
+    if (requireAuth && !session && !isGuest) {
         window.location.href = 'login.html';
         return null;
     }
 
     renderTopNavUser(profile);
-    return profile;
+    return profile || {};
 }
