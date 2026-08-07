@@ -10,8 +10,15 @@ let student = null;
 let profile = null;
 let canEdit = false;
 
-function fieldRow(label, key, value, editable) {
-    const display = value || '-';
+function formatTanggalIndo(isoDate) {
+    if (!isoDate) return null;
+    const bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+    const [y, m, d] = isoDate.split('-');
+    return `${parseInt(d, 10)} ${bulan[parseInt(m, 10) - 1]} ${y}`;
+}
+
+function fieldRow(label, key, value, editable, type = 'text') {
+    const display = type === 'date' ? (formatTanggalIndo(value) || '-') : (value || '-');
     if (!editable) {
         return `<div class="detail-row"><b>${label}:</b> <span>${display}</span></div>`;
     }
@@ -19,7 +26,7 @@ function fieldRow(label, key, value, editable) {
         <div class="detail-row" data-field="${key}">
             <b>${label}:</b>
             <span class="view-mode">${display}</span>
-            <input class="edit-mode hidden" data-key="${key}" value="${value || ''}">
+            <input type="${type}" class="edit-mode hidden" data-key="${key}" value="${value || ''}">
         </div>
     `;
 }
@@ -30,9 +37,9 @@ function render() {
         return;
     }
 
-    document.getElementById('pageTitle').textContent = `Detail ${student.nama} - X TKJ 3`;
+    document.getElementById('pageTitle').textContent = `Detail ${student.nama} - XI TKJ 2`;
     document.getElementById('detailTitle').innerHTML =
-        `<span class="title-line">${student.nama}</span><span class="title-line title-highlight">X TKJ 3</span>`;
+        `<span class="title-line">${student.nama}</span><span class="title-line title-highlight">XI TKJ 2</span>`;
 
     if (student.background_url) {
         document.body.style.backgroundImage = `url(${student.background_url})`;
@@ -52,7 +59,7 @@ function render() {
         ${fieldRow('Absen', 'absen', student.absen, false)}
         ${fieldRow('Kelas', 'kelas', student.kelas, false)}
         ${fieldRow('Alamat', 'alamat', student.alamat, canEdit)}
-        ${fieldRow('Tanggal Lahir', 'tanggal_lahir', student.tanggal_lahir, canEdit)}
+        ${fieldRow('Tanggal Lahir', 'tanggal_lahir', student.tanggal_lahir, canEdit, 'date')}
         ${fieldRow('Hobi', 'hobi', student.hobi, canEdit)}
         ${fieldRow('Cita-cita', 'cita_cita', student.cita_cita, canEdit)}
 
@@ -106,7 +113,8 @@ function bindEditHandlers() {
 
         const updates = {};
         document.querySelectorAll('.edit-mode').forEach(input => {
-            updates[input.dataset.key] = input.value.trim();
+            const val = input.value.trim();
+            updates[input.dataset.key] = val === '' ? null : val;
         });
 
         const fotoFile = document.getElementById('fotoFile').files[0];

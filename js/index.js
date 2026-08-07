@@ -47,7 +47,7 @@ async function loadSiteConfig() {
     const links = [];
     if (data.instagram_url) links.push(`<a href="${data.instagram_url}" target="_blank">Instagram</a>`);
     if (data.tiktok_url) links.push(`<a href="${data.tiktok_url}" target="_blank">TikTok</a>`);
-    socialLinks.innerHTML = links.length ? links.join(' &middot; ') : 'Anak X TKJ 3 Bangun Nusantara';
+    socialLinks.innerHTML = links.length ? links.join(' &middot; ') : 'Anak XI TKJ 2 Bangun Nusantara';
 
     document.getElementById('cfgBackground').value = data.background_url || '';
     document.getElementById('cfgInstagram').value = data.instagram_url || '';
