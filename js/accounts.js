@@ -4,34 +4,35 @@
 export const ACCOUNTS = [
     { username: 'guru', password: 'guru123', role: 'admin' },
 
-    { username: 'muhamad-abi-fadilah', password: 'muhamad-abi-fadilah', role: 'user', slug: 'muhamad-abi-fadilah' }, // Muhamad Abi Fadilah
-    { username: 'aditya-pratama-suhendi', password: 'aditya-pratama-suhendi', role: 'user', slug: 'aditya-pratama-suhendi' }, // Aditya Pratama Suhendi
-    { username: 'aldiansyah', password: 'aldiansyah', role: 'user', slug: 'aldiansyah' }, // Aldiansyah
-    { username: 'alfian-aditiansyah', password: 'alfian-aditiansyah', role: 'user', slug: 'alfian-aditiansyah' }, // Alfian Aditiansyah
-    { username: 'arga-fazri-ramadhan', password: 'arga-fazri-ramadhan', role: 'user', slug: 'arga-fazri-ramadhan' }, // Arga Fazri Ramadhan
-    { username: 'muhamad-arif-kurniawan', password: 'muhamad-arif-kurniawan', role: 'user', slug: 'muhamad-arif-kurniawan' }, // Muhamad Arif Kurniawan
-    { username: 'axelle-ashwan-finnegan', password: 'axelle-ashwan-finnegan', role: 'user', slug: 'axelle-ashwan-finnegan' }, // Axelle Ashwan Finnegan
-    { username: 'abdullah-khaerul-azzam', password: 'abdullah-khaerul-azzam', role: 'user', slug: 'abdullah-khaerul-azzam' }, // Abdullah Khaerul Azzam
-    { username: 'bagus-putra-ramadhan', password: 'bagus-putra-ramadhan', role: 'user', slug: 'bagus-putra-ramadhan' }, // Bagus Putra Ramadhan
-    { username: 'bayu-lutfiadi', password: 'bayu-lutfiadi', role: 'user', slug: 'bayu-lutfiadi' }, // Bayu Lutfiadi
-    { username: 'farel-fadilah', password: 'farel-fadilah', role: 'user', slug: 'farel-fadilah' }, // Farel Fadilah
-    { username: 'farrel-surya-ramadhan', password: 'farrel-surya-ramadhan', role: 'user', slug: 'farrel-surya-ramadhan' }, // Farrel Surya Ramadhan
-    { username: 'muhamad-alfazar', password: 'muhamad-alfazar', role: 'user', slug: 'muhamad-alfazar' }, // Muhamad Alfazar
-    { username: 'garrick-elbert-chandra', password: 'garrick-elbert-chandra', role: 'user', slug: 'garrick-elbert-chandra' }, // Garrick Elbert Chandra
-    { username: 'haikal-fadillah', password: 'haikal-fadillah', role: 'user', slug: 'haikal-fadillah' }, // Haikal Fadillah
-    { username: 'muhamad-hajik', password: 'muhamad-hajik', role: 'user', slug: 'muhamad-hajik' }, // Muhamad Hajik
-    { username: 'ihram-maqil-ghaisan', password: 'ihram-maqil-ghaisan', role: 'user', slug: 'ihram-maqil-ghaisan' }, // Ihram Maqil Ghaisan
-    { username: 'isabil-nuh-ardiansiah', password: 'isabil-nuh-ardiansiah', role: 'user', slug: 'isabil-nuh-ardiansiah' }, // Isabil Nuh Ardiansiah
-    { username: 'margianto', password: 'margianto', role: 'user', slug: 'margianto' }, // Margianto
-    { username: 'muhammad-nabil', password: 'muhammad-nabil', role: 'user', slug: 'muhammad-nabil' }, // Muhammad Nabil
-    { username: 'nadja-mudin-al-ayyuby-nasution', password: 'nadja-mudin-al-ayyuby-nasution', role: 'user', slug: 'nadja-mudin-al-ayyuby-nasution' }, // Nadja Mudin Al Ayyuby Nasution
-    { username: 'muhammad-fahrel-narwis', password: 'muhammad-fahrel-narwis', role: 'user', slug: 'muhammad-fahrel-narwis' }, // Muhammad Fahrel Narwis
-    { username: 'raditya-ilham-pratama', password: 'raditya-ilham-pratama', role: 'user', slug: 'raditya-ilham-pratama' }, // Raditya Ilham Pratama
-    { username: 'rasya-putra-bulivar', password: 'rasya-putra-bulivar', role: 'user', slug: 'rasya-putra-bulivar' }, // Rasya Putra Bulivar
-    { username: 'ridho-yudi-al-khafiz', password: 'ridho-yudi-al-khafiz', role: 'user', slug: 'ridho-yudi-al-khafiz' }, // Ridho Yudi Al Khafiz
-    { username: 'abdul-rohim', password: 'abdul-rohim', role: 'user', slug: 'abdul-rohim' }, // Abdul Rohim
-    { username: 'sendy-arkana-bahrudin', password: 'sendy-arkana-bahrudin', role: 'user', slug: 'sendy-arkana-bahrudin' }, // Sendy Arkana Bahrudin
-    { username: 'vincent', password: 'vincent', role: 'user', slug: 'vincent' }, // Vincent
-    { username: 'muhammad-zaky-muzakir', password: 'muhammad-zaky-muzakir', role: 'user', slug: 'muhammad-zaky-muzakir' }, // Muhammad Zaky Muzakir
-    { username: 'ahmad-zaky-munawar', password: 'ahmad-zaky-munawar', role: 'user', slug: 'ahmad-zaky-munawar' }, // Ahmad Zaky Munawar
+    { username: 'abdullah-khaerul-azzam', password: 'abdullah-khaerul-azzam', role: 'user', slug: 'abdullah-khaerul-azzam' }, // Abdullah Khaerul Azzam - NIS 11252070
+    { username: 'abdullah-mubarok', password: 'abdullah-mubarok', role: 'user', slug: 'abdullah-mubarok' }, // Abdullah Mubarok - NIS 11252103
+    { username: 'aditya-pratama-suhendi', password: 'aditya-pratama-suhendi', role: 'user', slug: 'aditya-pratama-suhendi' }, // Aditya Pratama Suhendi - NIS 11252071
+    { username: 'alam-dwi-maulana', password: 'alam-dwi-maulana', role: 'user', slug: 'alam-dwi-maulana' }, // Alam Dwi Maulana - NIS 11252106
+    { username: 'aldiansyah', password: 'aldiansyah', role: 'user', slug: 'aldiansyah' }, // Aldiansyah - NIS 11252073
+    { username: 'arya-galing-ahmad', password: 'arya-galing-ahmad', role: 'user', slug: 'arya-galing-ahmad' }, // Arya Galing Ahmad - NIS 11252005
+    { username: 'axelle-ashwan-finnegan', password: 'axelle-ashwan-finnegan', role: 'user', slug: 'axelle-ashwan-finnegan' }, // Axelle Ashwan Finnegan - NIS 11252076
+    { username: 'aziz-taufik-qurohman', password: 'aziz-taufik-qurohman', role: 'user', slug: 'aziz-taufik-qurohman' }, // Aziz Taufik Qurohman - NIS 11252110
+    { username: 'bayu-luthfiadi', password: 'bayu-luthfiadi', role: 'user', slug: 'bayu-luthfiadi' }, // Bayu Luthfiadi - NIS 11252078
+    { username: 'cheivin-herlino-ahady-tanjung', password: 'cheivin-herlino-ahady-tanjung', role: 'user', slug: 'cheivin-herlino-ahady-tanjung' }, // Cheivin Herlino Ahady Tanjung - NIS 11252111
+    { username: 'farel-fadilah', password: 'farel-fadilah', role: 'user', slug: 'farel-fadilah' }, // Farel Fadilah - NIS 11252080
+    { username: 'farrel-surya-ramadhan', password: 'farrel-surya-ramadhan', role: 'user', slug: 'farrel-surya-ramadhan' }, // Farrel Surya Ramadhan - NIS 11252081
+    { username: 'irsyad-khairul-anam', password: 'irsyad-khairul-anam', role: 'user', slug: 'irsyad-khairul-anam' }, // Irsyad Khairul Anam - NIS 11252044
+    { username: 'kiki-febrian', password: 'kiki-febrian', role: 'user', slug: 'kiki-febrian' }, // Kiki Febrian - NIS 11252017
+    { username: 'muh-iqbal', password: 'muh-iqbal', role: 'user', slug: 'muh-iqbal' }, // Muh. Iqbal - NIS 11252022
+    { username: 'muhamad-alfajri', password: 'muhamad-alfajri', role: 'user', slug: 'muhamad-alfajri' }, // Muhamad Alfajri - NIS 11252020
+    { username: 'muhamad-andrian-kafi', password: 'muhamad-andrian-kafi', role: 'user', slug: 'muhamad-andrian-kafi' }, // Muhamad Andrian Kafi - NIS 11252048
+    { username: 'muhamad-fadil-alfatih', password: 'muhamad-fadil-alfatih', role: 'user', slug: 'muhamad-fadil-alfatih' }, // Muhamad Fadil Alfatih - NIS 11252121
+    { username: 'muhamad-fahri', password: 'muhamad-fahri', role: 'user', slug: 'muhamad-fahri' }, // Muhamad Fahri - NIS 11252021
+    { username: 'muhammad-ajwad-fhadil', password: 'muhammad-ajwad-fhadil', role: 'user', slug: 'muhammad-ajwad-fhadil' }, // Muhammad Ajwad Fhadil - NIS 11252120
+    { username: 'muhammad-alhafidzi-fathul-yadi', password: 'muhammad-alhafidzi-fathul-yadi', role: 'user', slug: 'muhammad-alhafidzi-fathul-yadi' }, // Muhammad Alhafidzi Fathul Yadi - NIS 11252123
+    { username: 'muhammad-dava-andrian', password: 'muhammad-dava-andrian', role: 'user', slug: 'muhammad-dava-andrian' }, // Muhammad Dava Andrian - NIS 11252023
+    { username: 'muhammad-luthfi', password: 'muhammad-luthfi', role: 'user', slug: 'muhammad-luthfi' }, // Muhammad Luthfi - NIS 11252024
+    { username: 'nadja-mudin-al-ayyuby-nasution', password: 'nadja-mudin-al-ayyuby-nasution', role: 'user', slug: 'nadja-mudin-al-ayyuby-nasution' }, // Nadja Mudin Al Ayyuby Nasution - NIS 11252097
+    { username: 'rezki-awalludin', password: 'rezki-awalludin', role: 'user', slug: 'rezki-awalludin' }, // Rezki Awalludin - NIS 11252031
+    { username: 'ridho-ahmad-ibramavie', password: 'ridho-ahmad-ibramavie', role: 'user', slug: 'ridho-ahmad-ibramavie' }, // Ridho Ahmad Ibramavie - NIS 11252062
+    { username: 'rifqi-nabil-ukasyah', password: 'rifqi-nabil-ukasyah', role: 'user', slug: 'rifqi-nabil-ukasyah' }, // Rifqi Nabil Ukasyah - NIS 11252032
+    { username: 'sendy-arkana-bahrudin', password: 'sendy-arkana-bahrudin', role: 'user', slug: 'sendy-arkana-bahrudin' }, // Sendy Arkana Bahrudin - NIS 11252101
+    { username: 'vincent', password: 'vincent', role: 'user', slug: 'vincent' }, // Vincent - NIS 11252102
+    { username: 'virgian-haryatama-putra', password: 'virgian-haryatama-putra', role: 'user', slug: 'virgian-haryatama-putra' }, // Virgian Haryatama Putra - NIS 11252134
+    { username: 'yasakha', password: 'yasakha', role: 'user', slug: 'yasakha' }, // Yasakha - NIS 11252034
 ];
