@@ -67,9 +67,13 @@ async function loadSiteConfig() {
     }
 
     const links = [];
-    if (data.instagram_url) links.push(`<a href="${data.instagram_url}" target="_blank">Instagram</a>`);
-    if (data.tiktok_url) links.push(`<a href="${data.tiktok_url}" target="_blank">TikTok</a>`);
-    socialLinks.innerHTML = links.length ? links.join(' &middot; ') : 'Anak XI TKJ 2 Bangun Nusantara';
+    if (data.instagram_url) {
+        links.push(`<a href="${data.instagram_url}" target="_blank" class="social-btn instagram-btn"><img src="Images/Icon/Instagram.png" alt="Instagram" class="social-icon"><span>Instagram Kelas</span></a>`);
+    }
+    if (data.tiktok_url) {
+        links.push(`<a href="${data.tiktok_url}" target="_blank" class="social-btn tiktok-btn"><img src="Images/Icon/TikTok.png" alt="TikTok" class="social-icon"><span>TikTok Kelas</span></a>`);
+    }
+    socialLinks.innerHTML = links.length ? links.join('') : '<p class="social-empty">Anak XI TKJ 2 Bangun Nusantara</p>';
 
     renderBgPreview(currentBackgroundUrl);
     document.getElementById('cfgInstagram').value = data.instagram_url || '';
@@ -142,8 +146,11 @@ document.getElementById('cfgCancel').addEventListener('click', () => {
     const profile = await initNav();
     if (!profile) return;
 
-    if (profile?.role === 'admin') {
-        enableSettingsMenuItem(() => settingsModal.classList.add('open'));
+    if (profile?.role === 'admin' || profile?.role === 'pengurus') {
+        enableSettingsMenuItem(() => {
+            document.getElementById('cfgBackgroundSection').classList.toggle('hidden', profile.role !== 'admin');
+            settingsModal.classList.add('open');
+        });
     }
 
     await loadSiteConfig();
