@@ -521,15 +521,8 @@
                 Ikuti media sosial kelas kami untuk mendapatkan update terbaru, 
                 kegiatan kelas, dan informasi penting lainnya!
             </p>
-            <div class="social-links">
-                <a href="https://www.instagram.com/account_x_tkj_3" target="_blank" class="social-btn instagram-btn">
-                    <img src="Images/Icon/Instagram.png" alt="Instagram" class="social-icon">
-                    <span>Instagram X-TKJ-3 Bantara</span>
-                </a>
-                <a href="https://www.instagram.com/smk.bantara" target="_blank" class="social-btn instagram-btn">
-                    <img src="Images/Icon/Instagram.png" alt="Instagram" class="social-icon">
-                    <span>Instagram SMK Bantara</span>
-                </a>
+            <div class="social-links" id="socialLinksInfo">
+                <p class="social-empty">Memuat...</p>
             </div>
         </div>
 
@@ -572,7 +565,24 @@
 
     <script type="module">
         import { initNav } from './js/nav.js';
+        import { supabase } from './js/supabaseClient.js';
+
+        async function loadSocialLinks() {
+            const container = document.getElementById('socialLinksInfo');
+            const { data } = await supabase.from('site_config').select('*').eq('id', 1).single();
+
+            const links = [];
+            if (data?.instagram_url) {
+                links.push(`<a href="${data.instagram_url}" target="_blank" class="social-btn instagram-btn"><img src="Images/Icon/Instagram.png" alt="Instagram" class="social-icon"><span>Instagram Kelas</span></a>`);
+            }
+            if (data?.tiktok_url) {
+                links.push(`<a href="${data.tiktok_url}" target="_blank" class="social-btn tiktok-btn"><img src="Images/Icon/TikTok.png" alt="TikTok" class="social-icon"><span>TikTok Kelas</span></a>`);
+            }
+            container.innerHTML = links.length ? links.join('') : '<p class="social-empty">Belum ada link media sosial. Admin/pengurus bisa atur lewat menu Pengaturan di halaman Siswa.</p>';
+        }
+
         initNav();
+        loadSocialLinks();
     </script>
 
 </body>
