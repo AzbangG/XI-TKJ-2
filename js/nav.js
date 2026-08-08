@@ -17,9 +17,14 @@ const NAV_ITEMS = [
     { href: 'info.html', icon: 'Images/Icon/Info.png', label: 'Info' },
 ];
 
+let slideshowTimer = null;
+
 export function initBgSlideshow() {
     const root = document.getElementById('bgSlideshow');
     if (!root) return;
+
+    root.innerHTML = '';
+    if (slideshowTimer) clearInterval(slideshowTimer);
 
     BG_IMAGES.forEach((img, i) => {
         const slide = document.createElement('div');
@@ -33,11 +38,24 @@ export function initBgSlideshow() {
     const slides = root.querySelectorAll('.bg-slide');
     if (slides.length < 2) return;
 
-    setInterval(() => {
+    slideshowTimer = setInterval(() => {
         slides[current].classList.remove('active');
         current = (current + 1) % slides.length;
         slides[current].classList.add('active');
     }, 6000);
+}
+
+// Dipanggil kalau ada background custom dari admin (site_config) —
+// gantiin slideshow biar background custom-nya keliatan (sebelumnya
+// ketutup sama slideshow yang selalu di atas).
+export function setCustomBackground(url) {
+    const root = document.getElementById('bgSlideshow');
+    if (!root) return;
+
+    if (slideshowTimer) clearInterval(slideshowTimer);
+    slideshowTimer = null;
+
+    root.innerHTML = `<div class="bg-slide active" style="background-image:url('${url}')"></div>`;
 }
 
 export function initThemeToggle() {
@@ -59,56 +77,40 @@ const MONTH_NAMES = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Ju
 
 function pad2(n) { return String(n).padStart(2, '0'); }
 
-function formatDateFallback(now) {
-    return `${DAY_NAMES[now.getDay()]}, ${now.getDate()} ${MONTH_NAMES[now.getMonth()]} ${now.getFullYear()}`;
-}
-
 function formatTimeFallback(now) {
-    return `${pad2(now.getHours())}.${pad2(now.getMinutes())}.${pad2(now.getSeconds())}`;
+    return `${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
 }
 
 function initClock() {
-    const dateEl = document.getElementById('currentDate');
     const timeEl = document.getElementById('currentTime');
-    if (!dateEl || !timeEl) return;
+    if (!timeEl) return;
 
     function tick() {
         const now = new Date();
-
         try {
-            dateEl.textContent = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-        } catch (e) {
-            dateEl.textContent = formatDateFallback(now);
-        }
-
-        try {
-            timeEl.textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            timeEl.textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
         } catch (e) {
             timeEl.textContent = formatTimeFallback(now);
         }
     }
 
     tick();
-    setInterval(tick, 1000);
+    setInterval(tick, 1000 * 15);
 }
 
 function renderTopNavUser(profile) {
     const userInfo = document.getElementById('userInfo');
     const usernameEl = document.getElementById('username');
-    const logoutBtn = document.getElementById('logout-btn');
     const loginLink = document.getElementById('loginLink');
     if (!userInfo) return;
 
-    if (profile) {
+    if (profile && profile.username) {
         const label = profile.role === 'admin' ? `${profile.username} (Admin)` : profile.username;
         usernameEl.textContent = label.charAt(0).toUpperCase() + label.slice(1);
         userInfo.style.display = 'flex';
-        logoutBtn.style.display = 'flex';
         loginLink.style.display = 'none';
-        logoutBtn.addEventListener('click', logout);
     } else {
         userInfo.style.display = 'none';
-        logoutBtn.style.display = 'none';
         loginLink.style.display = 'flex';
     }
 }
@@ -129,15 +131,83 @@ function bottomNavHtml() {
     `).join('');
 }
 
+function topNavHtml() {
+    return `
+        <div class="nav-left">
+            <span class="nav-clock" id="currentTime">--:--</span>
+        </div>
+        <div class="nav-right">
+            <div class="user-info" id="userInfo" style="display:none;">
+                <img src="Images/Icon/User.png" class="nav-icon-img" alt="User">
+                <span class="username" id="username">User</span>
+            </div>
+            <a href="login.html" id="loginLink" class="icon-btn" style="display:none;">
+                <img src="Images/Icon/User.png" class="nav-icon-img" alt="Login">
+            </a>
+            <button id="theme-toggle" class="icon-btn" type="button">
+                <img src="Images/Icon/Sun.png" class="theme-icon theme-icon-sun" alt="Mode terang">
+                <img src="Images/Icon/Moon.png" class="theme-icon theme-icon-moon" alt="Mode gelap">
+            </button>
+            <div class="more-wrap">
+                <button id="moreBtn" class="icon-btn" type="button">
+                    <img src="Images/Icon/More.png" class="nav-icon-img" alt="More">
+                </button>
+                <div id="moreDropdown" class="more-dropdown hidden">
+                    <button id="settingsMenuBtn" class="dropdown-item hidden" type="button">⚙️ Pengaturan</button>
+                    <button id="logoutMenuBtn" class="dropdown-item" type="button">
+                        <img src="Images/Icon/Logout.png" class="dropdown-icon" alt="Logout"> Keluar
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function initMoreMenu() {
+    const moreBtn = document.getElementById('moreBtn');
+    const dropdown = document.getElementById('moreDropdown');
+    const logoutBtn = document.getElementById('logoutMenuBtn');
+    if (!moreBtn || !dropdown) return;
+
+    moreBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!dropdown.contains(e.target) && e.target !== moreBtn) {
+            dropdown.classList.add('hidden');
+        }
+    });
+
+    logoutBtn.addEventListener('click', logout);
+}
+
+// Dipanggil dari halaman yang punya menu pengaturan (index.html) buat
+// nampilin item "Pengaturan" di dropdown more, khusus admin.
+export function enableSettingsMenuItem(onClick) {
+    const btn = document.getElementById('settingsMenuBtn');
+    if (!btn) return;
+    btn.classList.remove('hidden');
+    btn.addEventListener('click', () => {
+        document.getElementById('moreDropdown').classList.add('hidden');
+        onClick();
+    });
+}
+
 const GUEST_KEY = 'bantara_guest';
 
 export async function initNav({ requireAuth = true } = {}) {
+    const topNav = document.getElementById('topNavRoot');
+    if (topNav) topNav.innerHTML = topNavHtml();
+
     const bottomNav = document.getElementById('bottomNav');
     if (bottomNav) bottomNav.innerHTML = bottomNavHtml();
 
     initBgSlideshow();
     initThemeToggle();
     initClock();
+    initMoreMenu();
     highlightActiveNav();
 
     const { session, profile } = await getSessionProfile();

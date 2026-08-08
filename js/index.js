@@ -1,10 +1,14 @@
 import { supabase } from './supabaseClient.js';
-import { initNav } from './nav.js';
+import { initNav, enableSettingsMenuItem, setCustomBackground, initBgSlideshow } from './nav.js';
 
 const grid = document.getElementById('siswaGrid');
 const socialLinks = document.getElementById('socialLinks');
-const settingsBtn = document.getElementById('settingsBtn');
 const settingsModal = document.getElementById('settingsModal');
+const bgPreview = document.getElementById('cfgBackgroundPreview');
+const bgFileInput = document.getElementById('cfgBackgroundFile');
+
+let currentBackgroundUrl = null;
+let pendingRemoveBackground = false;
 
 async function loadSiswa() {
     const { data, error } = await supabase
@@ -34,14 +38,32 @@ async function loadSiswa() {
     `).join('');
 }
 
+function renderBgPreview(url) {
+    if (url) {
+        bgPreview.src = url;
+        bgPreview.classList.remove('hidden');
+    } else {
+        bgPreview.classList.add('hidden');
+        bgPreview.src = '';
+    }
+}
+
 async function loadSiteConfig() {
-    const { data } = await supabase.from('site_config').select('*').eq('id', 1).single();
+    const { data, error } = await supabase.from('site_config').select('*').eq('id', 1).single();
+
+    if (error) {
+        console.error('Gagal memuat pengaturan halaman:', error.message);
+        return;
+    }
     if (!data) return;
 
-    if (data.background_url) {
-        document.body.style.backgroundImage = `url(${data.background_url})`;
-        document.body.style.backgroundSize = 'cover';
-        document.body.style.backgroundAttachment = 'fixed';
+    currentBackgroundUrl = data.background_url || null;
+    pendingRemoveBackground = false;
+
+    if (currentBackgroundUrl) {
+        setCustomBackground(currentBackgroundUrl);
+    } else {
+        initBgSlideshow();
     }
 
     const links = [];
@@ -49,36 +71,79 @@ async function loadSiteConfig() {
     if (data.tiktok_url) links.push(`<a href="${data.tiktok_url}" target="_blank">TikTok</a>`);
     socialLinks.innerHTML = links.length ? links.join(' &middot; ') : 'Anak XI TKJ 2 Bangun Nusantara';
 
-    document.getElementById('cfgBackground').value = data.background_url || '';
+    renderBgPreview(currentBackgroundUrl);
     document.getElementById('cfgInstagram').value = data.instagram_url || '';
     document.getElementById('cfgTiktok').value = data.tiktok_url || '';
 }
 
-document.getElementById('cfgSave').addEventListener('click', async () => {
-    const { error } = await supabase.from('site_config').update({
-        background_url: document.getElementById('cfgBackground').value.trim(),
+bgFileInput.addEventListener('change', () => {
+    const file = bgFileInput.files[0];
+    if (!file) return;
+    pendingRemoveBackground = false;
+    renderBgPreview(URL.createObjectURL(file));
+});
+
+document.getElementById('cfgRemoveBackground').addEventListener('click', () => {
+    bgFileInput.value = '';
+    pendingRemoveBackground = true;
+    renderBgPreview(null);
+});
+
+document.getElementById('cfgSave').addEventListener('click', async (e) => {
+    const btn = e.currentTarget;
+    btn.disabled = true;
+    btn.textContent = 'Menyimpan...';
+
+    const updates = {
         instagram_url: document.getElementById('cfgInstagram').value.trim(),
         tiktok_url: document.getElementById('cfgTiktok').value.trim(),
         updated_at: new Date().toISOString(),
-    }).eq('id', 1);
+    };
+
+    const file = bgFileInput.files[0];
+
+    try {
+        if (file) {
+            const ext = file.name.split('.').pop();
+            const path = `site/background.${ext}`;
+            const { error: upErr } = await supabase.storage.from('media').upload(path, file, { upsert: true });
+            if (upErr) throw upErr;
+            const { data: pub } = supabase.storage.from('media').getPublicUrl(path);
+            updates.background_url = `${pub.publicUrl}?t=${Date.now()}`;
+        } else if (pendingRemoveBackground) {
+            updates.background_url = null;
+        }
+    } catch (err) {
+        alert('Gagal upload background: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = 'Simpan';
+        return;
+    }
+
+    const { error } = await supabase.from('site_config').update(updates).eq('id', 1);
+
+    btn.disabled = false;
+    btn.textContent = 'Simpan';
 
     if (error) { alert('Gagal menyimpan: ' + error.message); return; }
+
+    bgFileInput.value = '';
     settingsModal.classList.remove('open');
     loadSiteConfig();
 });
 
 document.getElementById('cfgCancel').addEventListener('click', () => {
+    bgFileInput.value = '';
     settingsModal.classList.remove('open');
+    renderBgPreview(currentBackgroundUrl);
 });
-
-settingsBtn.addEventListener('click', () => settingsModal.classList.add('open'));
 
 (async () => {
     const profile = await initNav();
     if (!profile) return;
 
     if (profile?.role === 'admin') {
-        settingsBtn.classList.remove('hidden');
+        enableSettingsMenuItem(() => settingsModal.classList.add('open'));
     }
 
     await loadSiteConfig();
