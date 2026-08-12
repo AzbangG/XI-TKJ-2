@@ -34,12 +34,16 @@ function bubbleHtml(msg) {
 
     return `
         <div class="chat-bubble-row ${isOwn ? 'own' : 'other'}" data-id="${msg.id}">
-            <div class="chat-sender">${escapeHtml(msg.sender_username)}${msg.sender_role === 'admin' ? ' (Admin)' : ''}</div>
-            <div class="chat-bubble">${escapeHtml(msg.isi)}</div>
-            <div class="chat-meta">
-                <span class="chat-time">${formatTime(msg.created_at)}</span>
-                ${showDelete ? `<button class="chat-delete-btn" data-id="${msg.id}" type="button">Hapus</button>` : ''}
+            ${!isOwn ? '<img src="Images/Icon/User.png" class="chat-avatar" alt="">' : ''}
+            <div class="chat-bubble-col">
+                <div class="chat-sender">${escapeHtml(msg.sender_username)}${msg.sender_role === 'admin' ? ' (Admin)' : ''}</div>
+                <div class="chat-bubble">${escapeHtml(msg.isi)}</div>
+                <div class="chat-meta">
+                    <span class="chat-time">${formatTime(msg.created_at)}</span>
+                    ${showDelete ? `<button class="chat-delete-btn" data-id="${msg.id}" type="button"><img src="Images/Icon/Trash.png" alt="Hapus"></button>` : ''}
+                </div>
             </div>
+            ${isOwn ? '<img src="Images/Icon/User.png" class="chat-avatar" alt="">' : ''}
         </div>
     `;
 }
@@ -55,7 +59,9 @@ function renderMessages(messages) {
 }
 
 function scrollToBottom() {
-    messagesEl.scrollTop = messagesEl.scrollHeight;
+    requestAnimationFrame(() => {
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+    });
 }
 
 function bindDeleteButtons() {
@@ -88,10 +94,11 @@ function appendMessage(msg) {
     const empty = messagesEl.querySelector('p');
     if (empty) messagesEl.innerHTML = '';
 
+    const isOwn = profile && msg.sender_username === profile.username;
     const wasNearBottom = messagesEl.scrollHeight - messagesEl.scrollTop - messagesEl.clientHeight < 100;
     messagesEl.insertAdjacentHTML('beforeend', bubbleHtml(msg));
     bindDeleteButtons();
-    if (wasNearBottom) scrollToBottom();
+    if (isOwn || wasNearBottom) scrollToBottom();
 }
 
 function subscribeRealtime() {
@@ -124,6 +131,13 @@ form.addEventListener('submit', async (e) => {
 
     if (error) { alert('Gagal mengirim: ' + error.message); return; }
     input.value = '';
+    input.style.height = 'auto';
+    scrollToBottom();
+});
+
+input.addEventListener('input', () => {
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 100) + 'px';
 });
 
 input.addEventListener('keydown', (e) => {

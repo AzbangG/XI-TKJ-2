@@ -14,7 +14,6 @@ const NAV_ITEMS = [
     { href: 'jadwal.html', icon: 'Images/Icon/Jadwal.png', label: 'Jadwal' },
     { href: 'piket.html', icon: 'Images/Icon/Piket.png', label: 'Piket' },
     { href: 'tugas.html', icon: 'Images/Icon/Tugas.png', label: 'Tugas' },
-    { href: 'chat.html', icon: 'Images/Icon/Chat.png', label: 'Chat', fallback: '💬' },
     { href: 'info.html', icon: 'Images/Icon/Info.png', label: 'Info' },
 ];
 
@@ -121,6 +120,9 @@ function highlightActiveNav() {
     document.querySelectorAll('#bottomNav .nav-item').forEach(item => {
         item.classList.toggle('active', item.getAttribute('href') === current);
     });
+
+    const chatBtn = document.getElementById('chatNavBtn');
+    if (chatBtn) chatBtn.classList.toggle('active', current === 'chat.html');
 }
 
 function bottomNavHtml() {
@@ -136,6 +138,7 @@ function topNavHtml() {
     return `
         <div class="nav-left">
             <span class="nav-clock" id="currentTime">--:--</span>
+            <a href="chat.html" class="icon-btn" id="chatNavBtn" title="Chat Kelas">💬</a>
         </div>
         <div class="nav-right">
             <div class="user-info" id="userInfo" style="display:none;">
