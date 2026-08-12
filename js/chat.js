@@ -1,5 +1,6 @@
 import { supabase } from './supabaseClient.js';
 import { initNav } from './nav.js';
+import { ACCOUNTS } from './accounts.js';
 
 const messagesEl = document.getElementById('chatMessages');
 const form = document.getElementById('chatForm');
@@ -7,6 +8,26 @@ const input = document.getElementById('chatInput');
 const guestNotice = document.getElementById('chatGuestNotice');
 
 let profile = null;
+const avatarMap = {}; // username -> foto_url
+
+async function loadAvatars() {
+    const slugToUsername = {};
+    ACCOUNTS.forEach(a => { if (a.slug) slugToUsername[a.slug] = a.username; });
+
+    const slugs = Object.keys(slugToUsername);
+    if (!slugs.length) return;
+
+    const { data, error } = await supabase.from('students').select('slug, foto_url').in('slug', slugs);
+    if (error || !data) return;
+
+    data.forEach(s => {
+        if (s.foto_url) avatarMap[slugToUsername[s.slug]] = s.foto_url;
+    });
+}
+
+function avatarFor(username) {
+    return avatarMap[username] || 'Images/Icon/User.png';
+}
 
 function formatTime(iso) {
     const d = new Date(iso);
@@ -31,19 +52,20 @@ function canDelete(msg) {
 function bubbleHtml(msg) {
     const isOwn = profile && msg.sender_username === profile.username;
     const showDelete = canDelete(msg);
+    const avatarImg = `<img src="${avatarFor(msg.sender_username)}" class="chat-avatar" alt="" width="32" height="32" onerror="this.onerror=null;this.src='Images/Icon/User.png';">`;
 
     return `
         <div class="chat-bubble-row ${isOwn ? 'own' : 'other'}" data-id="${msg.id}">
-            ${!isOwn ? '<img src="Images/Icon/User.png" class="chat-avatar" alt="">' : ''}
+            ${!isOwn ? avatarImg : ''}
             <div class="chat-bubble-col">
                 <div class="chat-sender">${escapeHtml(msg.sender_username)}${msg.sender_role === 'admin' ? ' (Admin)' : ''}</div>
                 <div class="chat-bubble">${escapeHtml(msg.isi)}</div>
                 <div class="chat-meta">
                     <span class="chat-time">${formatTime(msg.created_at)}</span>
-                    ${showDelete ? `<button class="chat-delete-btn" data-id="${msg.id}" type="button"><img src="Images/Icon/Trash.png" alt="Hapus"></button>` : ''}
+                    ${showDelete ? `<button class="chat-delete-btn" data-id="${msg.id}" type="button"><img src="Images/Icon/Trash.png" alt="Hapus" width="13" height="13"></button>` : ''}
                 </div>
             </div>
-            ${isOwn ? '<img src="Images/Icon/User.png" class="chat-avatar" alt="">' : ''}
+            ${isOwn ? avatarImg : ''}
         </div>
     `;
 }
@@ -157,6 +179,7 @@ input.addEventListener('keydown', (e) => {
         guestNotice.classList.remove('hidden');
     }
 
+    await loadAvatars();
     await loadMessages();
     subscribeRealtime();
 })();

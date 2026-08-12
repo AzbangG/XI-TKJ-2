@@ -142,24 +142,24 @@ function topNavHtml() {
         </div>
         <div class="nav-right">
             <div class="user-info" id="userInfo" style="display:none;">
-                <img src="Images/Icon/User.png" class="nav-icon-img" alt="User">
+                <img src="Images/Icon/User.png" class="nav-icon-img" alt="User" width="22" height="22">
                 <span class="username" id="username">User</span>
             </div>
             <a href="login.html" id="loginLink" class="icon-btn" style="display:none;">
-                <img src="Images/Icon/User.png" class="nav-icon-img" alt="Login">
+                <img src="Images/Icon/User.png" class="nav-icon-img" alt="Login" width="22" height="22">
             </a>
             <button id="theme-toggle" class="icon-btn" type="button">
-                <img src="Images/Icon/Sun.png" class="theme-icon theme-icon-sun" alt="Mode terang">
-                <img src="Images/Icon/Moon.png" class="theme-icon theme-icon-moon" alt="Mode gelap">
+                <img src="Images/Icon/Sun.png" class="theme-icon theme-icon-sun" alt="Mode terang" width="20" height="20">
+                <img src="Images/Icon/Moon.png" class="theme-icon theme-icon-moon" alt="Mode gelap" width="20" height="20">
             </button>
             <div class="more-wrap">
                 <button id="moreBtn" class="icon-btn" type="button">
-                    <img src="Images/Icon/More.png" class="nav-icon-img" alt="More">
+                    <img src="Images/Icon/More.png" class="nav-icon-img" alt="More" width="22" height="22">
                 </button>
                 <div id="moreDropdown" class="more-dropdown hidden">
                     <button id="settingsMenuBtn" class="dropdown-item hidden" type="button">⚙️ Pengaturan</button>
                     <button id="logoutMenuBtn" class="dropdown-item" type="button">
-                        <img src="Images/Icon/Logout.png" class="dropdown-icon" alt="Logout"> Keluar
+                        <img src="Images/Icon/Logout.png" class="dropdown-icon" alt="Logout" width="18" height="18"> Keluar
                     </button>
                 </div>
             </div>
