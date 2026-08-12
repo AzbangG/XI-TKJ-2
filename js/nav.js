@@ -14,6 +14,7 @@ const NAV_ITEMS = [
     { href: 'jadwal.html', icon: 'Images/Icon/Jadwal.png', label: 'Jadwal' },
     { href: 'piket.html', icon: 'Images/Icon/Piket.png', label: 'Piket' },
     { href: 'tugas.html', icon: 'Images/Icon/Tugas.png', label: 'Tugas' },
+    { href: 'chat.html', icon: 'Images/Icon/Chat.png', label: 'Chat', fallback: '💬' },
     { href: 'info.html', icon: 'Images/Icon/Info.png', label: 'Info' },
 ];
 
@@ -125,7 +126,7 @@ function highlightActiveNav() {
 function bottomNavHtml() {
     return NAV_ITEMS.map(n => `
         <a href="${n.href}" class="nav-item">
-            <span class="nav-icon"><img src="${n.icon}" alt="${n.label}"></span>
+            <span class="nav-icon"><img src="${n.icon}" alt="${n.label}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'${n.fallback || '•'}',className:'nav-icon-fallback'}))"></span>
             <span class="nav-label">${n.label}</span>
         </a>
     `).join('');
