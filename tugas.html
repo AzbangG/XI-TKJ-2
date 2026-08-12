@@ -30,7 +30,35 @@
         <form id="addTugasForm" class="form-card hidden" style="margin-bottom:24px;">
             <h2>Tambah Tugas</h2>
             <div class="field"><label>Judul</label><input type="text" id="tJudul" required></div>
-            <div class="field"><label>Mapel</label><input type="text" id="tMapel"></div>
+            <div class="field">
+                <label>Mapel</label>
+                <select id="tMapel">
+                    <option value="">-- Pilih Mapel --</option>
+                    <optgroup label="Umum">
+                        <option>Matematika</option>
+                        <option>Bahasa Indonesia</option>
+                        <option>Bahasa Inggris</option>
+                        <option>Pendidikan Agama Islam</option>
+                        <option>PKN</option>
+                        <option>Sejarah Indonesia</option>
+                        <option>Seni Budaya</option>
+                        <option>PJOK</option>
+                        <option>Bahasa Sunda</option>
+                    </optgroup>
+                    <optgroup label="Kejuruan TKJ">
+                        <option>Komputer dan Jaringan Dasar</option>
+                        <option>Pemrograman Dasar</option>
+                        <option>Dasar Desain Grafis</option>
+                        <option>Sistem Komputer</option>
+                        <option>Administrasi Infrastruktur Jaringan</option>
+                        <option>Administrasi Sistem Jaringan</option>
+                        <option>Teknologi Jaringan Berbasis Luas (WAN)</option>
+                        <option>Teknologi Layanan Jaringan</option>
+                        <option>Produk Kreatif dan Kewirausahaan</option>
+                    </optgroup>
+                    <option value="Lainnya">Lainnya</option>
+                </select>
+            </div>
             <div class="field"><label>Deskripsi</label><input type="text" id="tDeskripsi"></div>
             <div class="field"><label>Deadline</label><input type="date" id="tDeadline"></div>
             <button type="submit" class="form-submit">Tambah Tugas</button>
